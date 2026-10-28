@@ -236,3 +236,42 @@ test("broadcast card preserves original message text and renders reply text safe
     f.dom.window.close();
   }
 });
+test("temporary account header removal retains the selected appearance", async () => {
+  const f = fixture();
+  try {
+    await settle();
+    f.w.chrome.runtime.sendMessage = async () => ({
+      state: {
+        version: 1,
+        revision: 5,
+        items: [],
+        sections: [],
+        preferences: { theme: "ocean" },
+      },
+    });
+    const account = f.w.document.querySelector(
+      '[aria-label*="Google Account"]',
+    );
+    account.remove();
+    await new Promise((r) => setTimeout(r, 350));
+    f.w.document.body.append(account);
+    await new Promise((r) => setTimeout(r, 350));
+    assert.equal(f.w.document.documentElement.dataset.cwTheme, "ocean");
+    account.remove();
+    await new Promise((r) => setTimeout(r, 350));
+    assert.equal(f.w.document.documentElement.dataset.cwTheme, "ocean");
+  } finally {
+    f.w.close();
+  }
+});
+test("duplicate injection does not create a second appearance controller", async () => {
+  const f = fixture();
+  try {
+    await settle();
+    f.w.eval(bundle);
+    assert.equal(f.w.document.querySelectorAll("#cw-host").length, 1);
+    assert.equal(f.w.document.querySelectorAll("#cw-experience").length, 1);
+  } finally {
+    f.w.close();
+  }
+});

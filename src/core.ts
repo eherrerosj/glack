@@ -17,6 +17,7 @@ export interface Section {
   links: { name: string; url: string }[];
 }
 export interface State {
+  revision?: number;
   version: 1;
   preferences?: Preferences;
   recent?: { name: string; url: string; seen: number }[];

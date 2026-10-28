@@ -286,7 +286,7 @@ View thread: ${url}`;
         }
       }
     });
-    async function change(patch) {
+    async function change(patch, refresh = false) {
       const requestedAccount = identity();
       const next = preferences({ ...p, ...patch });
       try {
@@ -295,6 +295,7 @@ View thread: ${url}`;
         p = next;
         apply();
         scan();
+        if (refresh) location.reload();
       } catch (e) {
         toast(e instanceof Error ? e.message : "Could not save preferences");
       }
@@ -328,9 +329,7 @@ View thread: ${url}`;
         ["native", "Google original"]
       ]) {
         const b = button(label2, () => {
-          void change({ theme: value }).then(
-            () => settings()
-          );
+          void change({ theme: value }, true);
         });
         b.dataset.swatch = value;
         b.setAttribute("aria-pressed", String(p.theme === value));
@@ -783,6 +782,7 @@ View thread: ${url}`;
   if (window.top === window && location.pathname !== "/drivesharing/driveshare")
     start();
   function start() {
+    if (document.getElementById("cw-host")) return;
     let state = emptyState(), identity = null, open = false, view = "later", query = "", busy = false;
     let selected = null;
     let returnFocus = null;
@@ -827,6 +827,7 @@ View thread: ${url}`;
       });
       if (requestedAccount !== identity) return state;
       if (result.error) throw Error(result.error);
+      if ((result.state.revision ?? 0) < (state.revision ?? 0)) return state;
       state = result.state;
       extras.update(state.preferences, state.recent);
       render();
@@ -1377,7 +1378,6 @@ View thread: ${url}`;
         identity = next;
         selected = null;
         state = emptyState();
-        extras.update(state.preferences, state.recent);
         if (next) act(() => rpc({ type: "read" }));
         else render();
       }

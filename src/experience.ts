@@ -90,7 +90,7 @@ export function experience(
       }
     }
   });
-  async function change(patch: Partial<Preferences>) {
+  async function change(patch: Partial<Preferences>, refresh = false) {
     const requestedAccount = identity();
     const next = preferences({ ...p, ...patch });
     try {
@@ -99,6 +99,7 @@ export function experience(
       p = next;
       apply();
       scan();
+      if (refresh) location.reload();
     } catch (e) {
       toast(e instanceof Error ? e.message : "Could not save preferences");
     }
@@ -132,9 +133,7 @@ export function experience(
       ["native", "Google original"],
     ]) {
       const b = button(label, () => {
-        void change({ theme: value as Preferences["theme"] }).then(() =>
-          settings(),
-        );
+        void change({ theme: value as Preferences["theme"] }, true);
       });
       b.dataset.swatch = value;
       b.setAttribute("aria-pressed", String(p.theme === value));

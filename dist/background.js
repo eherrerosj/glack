@@ -181,6 +181,7 @@
           default:
             throw Error("Unknown action");
         }
+        state.revision = (state.revision ?? 0) + 1;
         await chrome.storage.local.set({ [key(msg.account)]: state });
         await reconcile();
         reply({ state });

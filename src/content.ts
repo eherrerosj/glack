@@ -27,6 +27,7 @@ import css from "./style.css";
 if (window.top === window && location.pathname !== "/drivesharing/driveshare")
   start();
 function start() {
+  if (document.getElementById("cw-host")) return;
   let state: State = emptyState(),
     identity: string | null = null,
     open = false,
@@ -80,6 +81,7 @@ function start() {
     });
     if (requestedAccount !== identity) return state;
     if (result.error) throw Error(result.error);
+    if ((result.state.revision ?? 0) < (state.revision ?? 0)) return state;
     state = result.state;
     extras.update(state.preferences, state.recent);
     render();
@@ -690,7 +692,7 @@ function start() {
       identity = next;
       selected = null;
       state = emptyState();
-      extras.update(state.preferences, state.recent);
+      // Wait for the account read before replacing the visible appearance.
       if (next) act(() => rpc({ type: "read" }));
       else render();
     }
