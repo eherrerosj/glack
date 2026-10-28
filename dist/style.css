@@ -442,7 +442,6 @@ html.cw-styled .cw-workspace-rail {
   background: #ffffff20;
 }
 .cw-workspace-rail button:first-child {
-  background: #ffffff20;
   margin-bottom: 8px;
 }
 .cw-workspace-rail button:last-child {
@@ -807,16 +806,13 @@ html.cw-styled .cw-brand {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  letter-spacing: -0.6px;
+  letter-spacing: -0.4px;
 }
 html.cw-styled .cw-brand svg {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   fill: none !important;
-  stroke-width: 2.6;
-}
-.cw-workspace-rail button:first-child svg {
-  stroke-width: 2.5;
+  stroke-width: 1.8;
 }
 html.cw-styled .cw-topbar [aria-label="Chat logo"] {
   display: inline-flex !important;

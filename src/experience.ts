@@ -382,7 +382,6 @@ export function experience(
   const rail = node("nav", "", "cw-workspace-rail");
   rail.setAttribute("aria-label", "Glack workspace navigation");
   for (const [glyph, label, fn] of [
-    ["glack", "Glack appearance", settings],
     ["search", "Jump to conversation", switcher],
     ["later", "Open Later", () => document.getElementById("cw-nav")?.click()],
     [
