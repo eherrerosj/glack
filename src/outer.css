@@ -1,0 +1,70 @@
+.cw-message-row {
+  position: relative !important;
+}
+.cw-message-tools {
+  display: flex;
+  gap: 4px;
+  position: absolute;
+  right: 12px;
+  bottom: 2px;
+  z-index: 20;
+  opacity: 0;
+  background: var(--gm3-sys-color-surface, #f4f7f5);
+  border: 1px solid #b8c9c1;
+  border-radius: 10px;
+  padding: 3px;
+}
+.cw-message-row:hover > .cw-message-tools,
+.cw-message-row:focus-within > .cw-message-tools {
+  opacity: 1;
+}
+.cw-message-tools button {
+  font:
+    500 11px -apple-system,
+    sans-serif;
+  color: #305642;
+  background: #f4f7f5;
+  border: 0;
+  border-radius: 7px;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.cw-broadcast {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px 10px;
+  color: var(--gm3-sys-color-on-surface, #456552);
+  font:
+    500 12px -apple-system,
+    sans-serif;
+}
+.cw-broadcast input {
+  accent-color: #27734d;
+}
+.cw-nav {
+  display: block;
+  width: calc(100% - 20px);
+  text-align: left;
+  margin: 4px 10px;
+  padding: 9px 18px;
+  background: #dcece1;
+  color: #234c35;
+  border: 0;
+  border-radius: 20px;
+  font:
+    500 14px -apple-system,
+    sans-serif;
+  cursor: pointer;
+}
+.cw-thread-badge {
+  display: inline-block;
+  border-radius: 8px;
+  background: #e1efe6;
+  color: #345b43;
+  font:
+    600 11px -apple-system,
+    sans-serif;
+  padding: 5px 9px;
+  margin: 5px 8px;
+}
