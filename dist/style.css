@@ -900,3 +900,149 @@ html.cw-styled .cw-composer .N61DXb .EFNTcf {
   min-height: 0 !important;
   height: auto !important;
 }
+
+/* Chat installs its Material palette on body, overriding tokens inherited from html. */
+html.cw-styled body {
+  --gm3-sys-color-background: var(--cw-bg) !important;
+  --gm3-sys-color-background-rgb: var(--cw-bg-rgb) !important;
+  --gm3-sys-color-surface: var(--cw-bg) !important;
+  --gm3-sys-color-surface-rgb: var(--cw-bg-rgb) !important;
+  --gm3-sys-color-surface-bright: var(--cw-bg) !important;
+  --gm3-sys-color-surface-bright-rgb: var(--cw-bg-rgb) !important;
+  --gm3-sys-color-surface-dim: var(--cw-bg) !important;
+  --gm3-sys-color-surface-dim-rgb: var(--cw-bg-rgb) !important;
+  --gm3-sys-color-surface-container: var(--cw-bg) !important;
+  --gm3-sys-color-surface-container-rgb: var(--cw-bg-rgb) !important;
+  --gm3-sys-color-surface-container-low: var(--cw-bg) !important;
+  --gm3-sys-color-surface-container-low-rgb: var(--cw-bg-rgb) !important;
+  --gm3-sys-color-surface-container-lowest: var(--cw-bg) !important;
+  --gm3-sys-color-surface-container-lowest-rgb: var(--cw-bg-rgb) !important;
+  --gm3-sys-color-surface-container-high: var(--cw-hover) !important;
+  --gm3-sys-color-surface-container-high-rgb: var(--cw-hover-rgb) !important;
+  --gm3-sys-color-surface-container-highest: var(--cw-hover) !important;
+  --gm3-sys-color-surface-container-highest-rgb: var(--cw-hover-rgb) !important;
+  --gm3-sys-color-on-background: var(--cw-text) !important;
+  --gm3-sys-color-on-background-rgb: var(--cw-text-rgb) !important;
+  --gm3-sys-color-on-surface: var(--cw-text) !important;
+  --gm3-sys-color-on-surface-rgb: var(--cw-text-rgb) !important;
+  --gm3-sys-color-on-surface-variant: var(--cw-muted) !important;
+  --gm3-sys-color-on-surface-variant-rgb: var(--cw-muted-rgb) !important;
+  --gm3-sys-color-outline: var(--cw-muted) !important;
+  --gm3-sys-color-outline-rgb: var(--cw-muted-rgb) !important;
+  --gm3-sys-color-outline-variant: var(--cw-border) !important;
+  --gm3-sys-color-outline-variant-rgb: var(--cw-border-rgb) !important;
+  --gm3-sys-color-primary: var(--cw-selected) !important;
+  --gm3-sys-color-primary-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-on-primary: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-primary-rgb: var(--cw-selected-text-rgb) !important;
+  --gm3-sys-color-primary-container: var(--cw-selected) !important;
+  --gm3-sys-color-primary-container-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-primary-fixed: var(--cw-selected) !important;
+  --gm3-sys-color-primary-fixed-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-primary-fixed-dim: var(--cw-selected) !important;
+  --gm3-sys-color-primary-fixed-dim-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-on-primary-container: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-primary-container-rgb: var(
+    --cw-selected-text-rgb
+  ) !important;
+  --gm3-sys-color-on-primary-fixed: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-primary-fixed-rgb: var(--cw-selected-text-rgb) !important;
+  --gm3-sys-color-on-primary-fixed-variant: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-primary-fixed-variant-rgb: var(
+    --cw-selected-text-rgb
+  ) !important;
+  --gm3-sys-color-secondary: var(--cw-selected) !important;
+  --gm3-sys-color-secondary-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-on-secondary: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-secondary-rgb: var(--cw-selected-text-rgb) !important;
+  --gm3-sys-color-secondary-container: var(--cw-selected) !important;
+  --gm3-sys-color-secondary-container-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-secondary-fixed: var(--cw-selected) !important;
+  --gm3-sys-color-secondary-fixed-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-secondary-fixed-dim: var(--cw-selected) !important;
+  --gm3-sys-color-secondary-fixed-dim-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-on-secondary-container: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-secondary-container-rgb: var(
+    --cw-selected-text-rgb
+  ) !important;
+  --gm3-sys-color-on-secondary-fixed: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-secondary-fixed-rgb: var(
+    --cw-selected-text-rgb
+  ) !important;
+  --gm3-sys-color-on-secondary-fixed-variant: var(
+    --cw-selected-text
+  ) !important;
+  --gm3-sys-color-on-secondary-fixed-variant-rgb: var(
+    --cw-selected-text-rgb
+  ) !important;
+  --gm3-sys-color-tertiary: var(--cw-selected) !important;
+  --gm3-sys-color-tertiary-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-on-tertiary: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-tertiary-rgb: var(--cw-selected-text-rgb) !important;
+  --gm3-sys-color-tertiary-container: var(--cw-selected) !important;
+  --gm3-sys-color-tertiary-container-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-tertiary-fixed: var(--cw-selected) !important;
+  --gm3-sys-color-tertiary-fixed-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-tertiary-fixed-dim: var(--cw-selected) !important;
+  --gm3-sys-color-tertiary-fixed-dim-rgb: var(--cw-selected-rgb) !important;
+  --gm3-sys-color-on-tertiary-container: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-tertiary-container-rgb: var(
+    --cw-selected-text-rgb
+  ) !important;
+  --gm3-sys-color-on-tertiary-fixed: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-tertiary-fixed-rgb: var(--cw-selected-text-rgb) !important;
+  --gm3-sys-color-on-tertiary-fixed-variant: var(--cw-selected-text) !important;
+  --gm3-sys-color-on-tertiary-fixed-variant-rgb: var(
+    --cw-selected-text-rgb
+  ) !important;
+  --primary-text-color: var(--cw-text) !important;
+  --secondary-text-color: var(--cw-muted) !important;
+  --header-text-color: var(--cw-text) !important;
+  --text-link-color: var(--cw-link) !important;
+  --card-bg-color: var(--cw-bg) !important;
+  --chip-bg-color: var(--cw-hover) !important;
+  --world-section-active-bg-color: var(--cw-selected) !important;
+  --world-group-text-color: var(--cw-side-text) !important;
+  --world-group-unread-text-color: var(--cw-side-text) !important;
+  --list-item-hover-bg-color: var(--cw-hover) !important;
+  --list-item-focus-bg-color: var(--cw-hover) !important;
+}
+html.cw-styled :is(.AF0zs, .CjZXwd, .Kbjimc, .DfF22b) {
+  background: var(--cw-bg) !important;
+  color: var(--cw-text) !important;
+}
+html.cw-styled .cw-sidebar {
+  --gm3-sys-color-on-surface: var(--cw-side-text);
+  --gm3-sys-color-on-surface-variant: var(--cw-side-text);
+  --primary-text-color: var(--cw-side-text);
+  --secondary-text-color: var(--cw-side-text);
+}
+html.cw-styled .cw-sidebar .fqMOM.Qb1ood {
+  background: var(--cw-selected) !important;
+  color: var(--cw-selected-text) !important;
+}
+html.cw-styled .cw-sidebar .fqMOM.Qb1ood :is(span, svg, div) {
+  color: inherit !important;
+}
+
+html.cw-styled .NhKrqd {
+  --primary-text-color: var(--cw-text);
+  --ae-chip-label-text-color: var(--cw-text);
+  background: var(--cw-hover) !important;
+  color: var(--cw-text) !important;
+}
+html.cw-styled .NhKrqd[data-user-mention-type="3"] {
+  --primary-text-color: var(--cw-selected-text);
+  --ae-chip-label-text-color: var(--cw-selected-text);
+  background: var(--cw-selected) !important;
+  color: var(--cw-selected-text) !important;
+}
+html.cw-styled .NhKrqd :is(.MsqITd, svg) {
+  color: inherit !important;
+}
+html.cw-styled .NhKrqd .MsqITd {
+  color: var(--cw-text) !important;
+}
+html.cw-styled .NhKrqd[data-user-mention-type="3"] :is(span, svg) {
+  color: var(--cw-selected-text) !important;
+}

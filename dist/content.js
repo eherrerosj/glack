@@ -126,6 +126,24 @@ View thread: ${url}`;
     lavender: ["#352d58", "#514673", "#65528c"],
     sunset: ["#543222", "#754931", "#8b542d"]
   };
+  function themeColors(p, systemDark = false) {
+    const palette = palettes[p.theme];
+    if (!palette) return {};
+    const dark = resolvedMode(p.mode, systemDark) === "dark";
+    return {
+      rail: palette[0],
+      side: palette[1],
+      "side-text": p.theme === "light" ? "#352636" : "#f7f4fa",
+      bg: dark ? "#1a1d21" : "#ffffff",
+      text: dark ? "#e1e2e3" : "#1d1c1d",
+      muted: dark ? "#b2b5ba" : "#616061",
+      border: dark ? "#383a3e" : "#dddddd",
+      hover: dark ? "#26292e" : "#f6f6f7",
+      selected: palette[2],
+      "selected-text": "#ffffff",
+      link: dark ? "#9ecbff" : "#1264a3"
+    };
+  }
 
   // src/adapter.ts
   var rows = "[data-message-multiplat-item-id][data-id]";
@@ -342,19 +360,7 @@ View thread: ${url}`;
       root.classList.toggle("cw-code-enabled", p.code);
       const mode = resolvedMode(p.mode, systemMode?.matches ?? false);
       if (root.dataset.cwMode !== mode) root.dataset.cwMode = mode;
-      const palette = palettes[p.theme];
-      const colors = palette ? {
-        rail: palette[0],
-        side: palette[1],
-        "side-text": p.theme === "light" ? "#352636" : "#f7f4fa",
-        bg: mode === "dark" ? "#1a1d21" : "#ffffff",
-        text: mode === "dark" ? "#e1e2e3" : "#1d1c1d",
-        muted: mode === "dark" ? "#b2b5ba" : "#616061",
-        border: mode === "dark" ? "#383a3e" : "#dddddd",
-        hover: mode === "dark" ? "#26292e" : "#f6f6f7",
-        selected: palette[2],
-        link: mode === "dark" ? "#9ecbff" : "#1264a3"
-      } : {};
+      const colors = themeColors(p, systemMode?.matches ?? false);
       for (const key of [
         "rail",
         "side",
@@ -365,10 +371,17 @@ View thread: ${url}`;
         "border",
         "hover",
         "selected",
+        "selected-text",
         "link"
       ]) {
-        if (colors[key]) root.style.setProperty(`--cw-${key}`, colors[key]);
-        else root.style.removeProperty(`--cw-${key}`);
+        if (colors[key]) {
+          root.style.setProperty(`--cw-${key}`, colors[key]);
+          const rgb = colors[key].slice(1).match(/../g).map((v) => parseInt(v, 16)).join(", ");
+          root.style.setProperty(`--cw-${key}-rgb`, rgb);
+        } else {
+          root.style.removeProperty(`--cw-${key}`);
+          root.style.removeProperty(`--cw-${key}-rgb`);
+        }
       }
       host.dataset.theme = p.theme;
       host.dataset.mode = mode;

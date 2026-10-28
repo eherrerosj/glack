@@ -85,3 +85,25 @@ export const palettes: Record<string, [string, string, string]> = {
   lavender: ["#352d58", "#514673", "#65528c"],
   sunset: ["#543222", "#754931", "#8b542d"],
 };
+
+export function themeColors(
+  p: Preferences,
+  systemDark = false,
+): Record<string, string> {
+  const palette = palettes[p.theme];
+  if (!palette) return {};
+  const dark = resolvedMode(p.mode, systemDark) === "dark";
+  return {
+    rail: palette[0],
+    side: palette[1],
+    "side-text": p.theme === "light" ? "#352636" : "#f7f4fa",
+    bg: dark ? "#1a1d21" : "#ffffff",
+    text: dark ? "#e1e2e3" : "#1d1c1d",
+    muted: dark ? "#b2b5ba" : "#616061",
+    border: dark ? "#383a3e" : "#dddddd",
+    hover: dark ? "#26292e" : "#f6f6f7",
+    selected: palette[2],
+    "selected-text": "#ffffff",
+    link: dark ? "#9ecbff" : "#1264a3",
+  };
+}

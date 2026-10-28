@@ -47,3 +47,43 @@ test("every palette supports readable white selected-navigation labels", async (
   for (const [name, colors] of Object.entries(palettes))
     assert.ok(1.05 / (luminance(colors[2]) + 0.05) >= 4.5, name);
 });
+
+test("all palettes and display modes keep text readable on their surfaces", async () => {
+  const { palettes, themeColors } = await import("../src/preferences.ts");
+  function luminance(hex) {
+    const c = hex
+      .slice(1)
+      .match(/../g)
+      .map((v) => parseInt(v, 16) / 255)
+      .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+    return c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
+  }
+  function contrast(a, b) {
+    const x = luminance(a),
+      y = luminance(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  }
+  for (const theme of Object.keys(palettes)) {
+    for (const mode of ["light", "dark", "system"]) {
+      for (const systemDark of [false, true]) {
+        const c = themeColors(preferences({ theme, mode }), systemDark);
+        for (const [foreground, background] of [
+          ["text", "bg"],
+          ["muted", "bg"],
+          ["text", "hover"],
+          ["muted", "hover"],
+          ["link", "bg"],
+          ["side-text", "side"],
+          ["selected-text", "selected"],
+          ["selected-text", "rail"],
+        ]) {
+          assert.ok(
+            contrast(c[foreground], c[background]) >= 4.5,
+            `${theme}/${mode}/${systemDark}: ${foreground} on ${background}`,
+          );
+        }
+      }
+    }
+  }
+  assert.deepEqual(themeColors(preferences({ theme: "native" })), {});
+});
