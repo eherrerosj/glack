@@ -84,8 +84,7 @@
   padding: 3px 7px;
   margin: 3px 0 7px;
 }
-.cw-author-line,
-.cw-workspace-rail {
+.cw-author-line {
   display: none;
 }
 .cw-code-button,
@@ -173,7 +172,7 @@ html.cw-styled body {
 }
 /* The shared V5dTbb class also occurs in the message pane: scope it to the sidebar. */
 html.cw-styled .SuElue:has(.cw-sidebar) {
-  margin-left: 56px !important;
+  margin-left: 0 !important;
   background: var(--cw-side) !important;
 }
 html.cw-styled .SuElue:has(.cw-sidebar) :is(.V5dTbb, .x6eWOb) {
@@ -409,56 +408,9 @@ html.cw-styled [contenteditable="true"][role="textbox"] {
 html.cw-styled .XganBc :is(button, [role="button"]) {
   color: var(--cw-muted) !important;
 }
-html.cw-styled .cw-workspace-rail {
-  position: fixed;
-  left: 0;
-  top: 64px;
-  bottom: 0;
-  width: 56px;
-  background: var(--cw-rail);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  z-index: 0;
-}
-.cw-workspace-rail button {
-  border: 0;
-  background: transparent;
-  color: #f9edf9;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 9px;
-  cursor: pointer;
-}
-.cw-workspace-rail svg {
-  width: 22px;
-  height: 22px;
-}
-.cw-workspace-rail button:hover {
-  background: #ffffff20;
-}
-.cw-workspace-rail button:first-child {
-  margin-bottom: 8px;
-}
-.cw-workspace-rail button:last-child {
-  margin-top: auto;
-}
-.cw-workspace-rail button:focus-visible,
 .cw-nav:focus-visible {
   outline: 2px solid #c9b7d1;
   outline-offset: 2px;
-}
-@media (max-width: 700px) {
-  html.cw-styled .cw-workspace-rail {
-    display: none;
-  }
-  html.cw-styled .SuElue:has(.cw-sidebar) {
-    margin-left: 0 !important;
-  }
 }
 html.cw-styled .cw-message-row.cw-has-author .yMXUbf {
   display: none !important;

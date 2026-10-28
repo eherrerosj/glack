@@ -487,25 +487,6 @@ export function experience(
     draw();
     copy.focus();
   }
-  const rail = node("nav", "", "cw-workspace-rail");
-  rail.setAttribute("aria-label", "Glack workspace navigation");
-  for (const [glyph, label, fn] of [
-    ["search", "Jump to conversation", switcher],
-    ["later", "Open Later", () => document.getElementById("cw-nav")?.click()],
-    [
-      "media",
-      "Toggle media",
-      () => void change({ collapseMedia: !p.collapseMedia }),
-    ],
-    ["theme", "Appearance and keyword radar", settings],
-  ] as const) {
-    const b = button("", fn);
-    b.append(icon(glyph));
-    b.title = label;
-    b.setAttribute("aria-label", label);
-    rail.append(b);
-  }
-  document.body.append(rail);
   function scan() {
     if (route !== location.pathname) {
       route = location.pathname;
