@@ -767,9 +767,11 @@ function start() {
   }).observe(document.body, { childList: true, subtree: true });
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === "local" && identity && changes[`account:${identity}`]) {
-      state =
+      const updated =
         (changes[`account:${identity}`].newValue as State | undefined) ??
         emptyState();
+      if ((updated.revision ?? 0) < (state.revision ?? 0)) return;
+      state = updated;
       extras.update(state.preferences, state.recent);
       render();
     }

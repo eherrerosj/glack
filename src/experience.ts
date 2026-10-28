@@ -91,13 +91,20 @@ export function experience(
       }
     }
   });
+  let preferenceWrite = Promise.resolve();
+  let selection = 0;
   async function change(patch: Partial<Preferences>, refresh = false) {
     const requestedAccount = identity();
-    const next = preferences({ ...p, ...patch });
+    const request = ++selection;
     try {
-      await rpc({ type: "preferences", preferences: next });
-      if (identity() !== requestedAccount) return;
-      p = next;
+      preferenceWrite = preferenceWrite
+        .catch(() => {})
+        .then(async () => {
+          await rpc({ type: "preferences", patch });
+        });
+      await preferenceWrite;
+      if (identity() !== requestedAccount || request !== selection) return;
+      p = preferences({ ...p, ...patch });
       apply();
       scan();
       if (refresh) location.reload();

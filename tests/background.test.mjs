@@ -129,3 +129,19 @@ test("recent conversations survive reads and stay scoped to the account", async 
     undefined,
   );
 });
+test("preference patches from other tabs do not revert the saved theme", async () => {
+  const h = await harness();
+  await h.rpc({ type: "preferences", patch: { theme: "dark" } });
+  await h.rpc({ type: "preferences", patch: { compact: false } });
+  let result = await h.rpc({ type: "read" });
+  assert.equal(result.state.preferences.theme, "dark");
+  assert.equal(result.state.preferences.compact, false);
+  await Promise.all(
+    ["ocean", "light", "aubergine", "dark"].map((theme) =>
+      h.rpc({ type: "preferences", patch: { theme } }),
+    ),
+  );
+  result = await h.rpc({ type: "read" });
+  assert.equal(result.state.preferences.theme, "dark");
+  assert.equal(result.state.preferences.compact, false);
+});

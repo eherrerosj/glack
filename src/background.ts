@@ -55,7 +55,11 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
           break;
         }
         case "preferences":
-          state.preferences = preferences(msg.preferences);
+          state.preferences = preferences(
+            msg.patch
+              ? { ...state.preferences, ...msg.patch }
+              : msg.preferences,
+          );
           break;
         case "radar": {
           if (!state.preferences?.alerts || !safeLink(msg.url ?? ""))

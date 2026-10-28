@@ -287,13 +287,19 @@ View thread: ${url}`;
         }
       }
     });
+    let preferenceWrite = Promise.resolve();
+    let selection = 0;
     async function change(patch, refresh = false) {
       const requestedAccount = identity();
-      const next = preferences({ ...p, ...patch });
+      const request = ++selection;
       try {
-        await rpc({ type: "preferences", preferences: next });
-        if (identity() !== requestedAccount) return;
-        p = next;
+        preferenceWrite = preferenceWrite.catch(() => {
+        }).then(async () => {
+          await rpc({ type: "preferences", patch });
+        });
+        await preferenceWrite;
+        if (identity() !== requestedAccount || request !== selection) return;
+        p = preferences({ ...p, ...patch });
         apply();
         scan();
         if (refresh) location.reload();
@@ -1464,7 +1470,9 @@ View thread: ${url}`;
     }).observe(document.body, { childList: true, subtree: true });
     chrome.storage.onChanged.addListener((changes, area) => {
       if (area === "local" && identity && changes[`account:${identity}`]) {
-        state = changes[`account:${identity}`].newValue ?? emptyState();
+        const updated = changes[`account:${identity}`].newValue ?? emptyState();
+        if ((updated.revision ?? 0) < (state.revision ?? 0)) return;
+        state = updated;
         extras.update(state.preferences, state.recent);
         render();
       }
