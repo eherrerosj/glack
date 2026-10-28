@@ -475,8 +475,8 @@ html.cw-styled .cw-topbar .tryNwe {
   border: 0 !important;
   margin: 0 !important;
   top: 0 !important;
-  bottom: 0 !important;
-  height: auto !important;
+  bottom: auto !important;
+  height: 46px !important;
   align-items: center !important;
   padding: 0 6px 0 0 !important;
 }
@@ -750,4 +750,12 @@ html.cw-styled .cw-message-row .UgwGlb button {
 html.cw-styled .cw-message-row .CYx15d .vdRKO {
   color: var(--cw-link) !important;
   font-weight: 600;
+}
+
+html.cw-styled .cw-topbar [role="search"] [aria-label="Clear search"] svg {
+  box-sizing: border-box !important;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
