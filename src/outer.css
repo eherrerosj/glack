@@ -472,8 +472,52 @@ html.cw-styled .cw-sidebar [role="listitem"].qs41qe [role="link"] {
 }
 html.cw-styled .cw-topbar .tryNwe {
   background: none !important;
+  border: 0 !important;
+  margin: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  height: auto !important;
+  align-items: center !important;
+  padding: 0 6px 0 0 !important;
+}
+html.cw-styled .cw-topbar [role="search"] .XnLB8 {
+  height: 28px !important;
+  padding-left: 8px !important;
   border-left: 1px solid #ffffff30 !important;
-  margin: 5px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+html.cw-styled .cw-topbar [role="search"] [aria-label="Ask Gemini"] {
+  height: 32px !important;
+  margin: 0 !important;
+  padding: 0 8px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+html.cw-styled .cw-topbar [role="search"] [aria-label="Ask Gemini"]:hover {
+  background: #ffffff14 !important;
+}
+html.cw-styled .cw-topbar [role="search"] [aria-label="Clear search"] {
+  width: 32px !important;
+  min-width: 32px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+html.cw-styled
+  .cw-topbar
+  [role="search"]:has(input[role="combobox"]:placeholder-shown)
+  [aria-label="Clear search"] {
+  display: none !important;
+}
+html.cw-styled .cw-topbar [role="search"] .eOgmqe {
+  margin-left: 48px !important;
+  margin-right: 156px !important;
+}
+html.cw-styled
+  .cw-topbar
+  [role="search"]:has(input[role="combobox"]:placeholder-shown)
+  .eOgmqe {
+  margin-right: 124px !important;
 }
 html.cw-styled .cw-topbar .YIBz5 {
   background: none !important;
