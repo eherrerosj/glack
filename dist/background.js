@@ -40,7 +40,7 @@
   function validateBackup(value) {
     const s = value;
     if (!s || s.version !== 1 || !Array.isArray(s.items) || !Array.isArray(s.sections) || s.items.length > 1e4 || s.sections.length > 50)
-      throw Error("This is not a supported Workbench backup");
+      throw Error("This is not a supported Glack backup");
     for (const i of s.items)
       if (!i || typeof i.id !== "string" || i.id.length > 300 || typeof i.text !== "string" || i.text.length > 3e4 || !Number.isFinite(i.savedAt) || !safeLink(i.url ?? "") || i.due !== void 0 && !Number.isFinite(i.due))
         throw Error("Backup contains an invalid saved message");

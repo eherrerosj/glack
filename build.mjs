@@ -17,14 +17,14 @@ await writeFile(
   JSON.stringify(
     {
       manifest_version: 3,
-      name: "Chat Workbench",
-      version: "0.2.2",
+      name: "Glack",
+      version: "0.3.0",
       description:
         "A quieter Google Chat: Later, local reminders, collections and thread broadcasts.",
       permissions: ["storage", "alarms", "notifications"],
       host_permissions: ["https://chat.google.com/*"],
       background: { service_worker: "background.js" },
-      action: { default_title: "Open Chat Workbench" },
+      action: { default_title: "Open Glack" },
       icons: { 128: "icon.png" },
       content_scripts: [
         {

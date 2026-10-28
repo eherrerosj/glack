@@ -133,13 +133,13 @@ function start() {
       () => (open ? close() : show()),
       "cw-launcher",
     );
-    launcher.title = "Chat Workbench · Alt+Shift+L";
+    launcher.title = "Glack · Alt+Shift+L";
     launcher.setAttribute("aria-expanded", String(open));
     ui.append(launcher);
     if (due.length) launcher.classList.add("cw-due");
     if (!open) return;
     const panel = el("section", "cw-panel");
-    panel.setAttribute("aria-label", "Chat Workbench");
+    panel.setAttribute("aria-label", "Glack");
     const head = el("header", "cw-head");
     const titles = el("div");
     titles.append(
@@ -247,7 +247,7 @@ function start() {
       const importer = el("input", "cw-input");
       importer.type = "file";
       importer.accept = ".json";
-      importer.setAttribute("aria-label", "Import Workbench backup");
+      importer.setAttribute("aria-label", "Import Glack backup");
       importer.onchange = () =>
         act(async () => {
           const file = importer.files?.[0];
@@ -291,7 +291,7 @@ function start() {
           );
           const a = el("a");
           a.href = url;
-          a.download = "chat-workbench-backup.json";
+          a.download = "glack-backup.json";
           a.click();
           setTimeout(() => URL.revokeObjectURL(url), 5000);
         }),

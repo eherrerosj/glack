@@ -381,9 +381,9 @@ export function experience(
     copy.focus();
   }
   const rail = node("nav", "", "cw-workspace-rail");
-  rail.setAttribute("aria-label", "Workbench workspace navigation");
+  rail.setAttribute("aria-label", "Glack workspace navigation");
   for (const [glyph, label, fn] of [
-    ["grid", "Chat Workbench appearance", settings],
+    ["grid", "Glack appearance", settings],
     ["search", "Jump to conversation", switcher],
     ["later", "Open Later", () => document.getElementById("cw-nav")?.click()],
     [

@@ -81,7 +81,7 @@ export function validateBackup(value: unknown): State {
     s.items.length > 10000 ||
     s.sections.length > 50
   )
-    throw Error("This is not a supported Workbench backup");
+    throw Error("This is not a supported Glack backup");
   for (const i of s.items)
     if (
       !i ||

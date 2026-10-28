@@ -1,4 +1,4 @@
-# Chat Workbench
+# Glack
 
 Local Chrome extension for Google Chat. Installed unpacked in Enrique's Chrome profile as `noilnpoahclgelmmlojbaeanmafkcgnf`.
 
@@ -22,7 +22,7 @@ npm run build
 npm test
 ```
 
-After rebuilding, open chrome://extensions, click Reload on Chat Workbench, then reload Google Chat tabs and its desktop app. No Google OAuth setup is required. To remove, use Chrome's Remove button; export a backup first if you want to keep saved items.
+After rebuilding, open chrome://extensions, click Reload on Glack, then reload Google Chat tabs and its desktop app. No Google OAuth setup is required. To remove, use Chrome's Remove button; export a backup first if you want to keep saved items.
 
 ## Scope and limitations
 
