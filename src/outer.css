@@ -880,3 +880,18 @@ html.cw-styled[data-cw-mode="dark"] .cw-message-row :is(button, [role="button"])
   color: var(--cw-text) !important;
   border-color: var(--cw-border) !important;
 }
+/* Remove cumulative native padding inside the single Glack composer border. */
+html.cw-styled .cw-composer { padding: 6px !important; }
+html.cw-styled .cw-composer .dJ9vNe { padding: 0 !important; }
+html.cw-styled .cw-composer .tAVIoc { padding: 0 4px !important; }
+html.cw-styled .cw-composer :is(.I0LFzc, .dJ9vNe, .BScnzc) {
+  min-height: 38px !important;
+  align-items: center !important;
+}
+html.cw-styled .cw-composer [contenteditable="true"][role="textbox"] {
+  box-sizing: border-box !important;
+  min-height: 38px !important;
+  padding: 8px 4px !important;
+  margin: 0 !important;
+  line-height: 22px !important;
+}
