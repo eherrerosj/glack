@@ -220,7 +220,7 @@ View thread: ${url}`;
 
   // src/experience.ts
   function experience(identity, rpc, toast) {
-    let p = preferences(), account2 = "", baseline = Date.now(), active = false;
+    let p = preferences(), account2 = "", baseline = Date.now(), active = false, appearanceReady = false;
     let route = location.pathname, visited = "";
     const seen = /* @__PURE__ */ new Set(), recent = /* @__PURE__ */ new Map();
     const host = document.createElement("div");
@@ -303,7 +303,7 @@ View thread: ${url}`;
     }
     function apply() {
       const root = document.documentElement;
-      root.dataset.cwTheme = p.theme;
+      if (root.dataset.cwTheme !== p.theme) root.dataset.cwTheme = p.theme;
       root.classList.toggle("cw-styled", p.theme !== "native");
       root.classList.toggle("cw-compact", p.compact);
       root.classList.toggle("cw-hide-media", p.collapseMedia);
@@ -312,6 +312,12 @@ View thread: ${url}`;
       const workbench = document.getElementById("cw-host");
       if (workbench) workbench.dataset.theme = p.theme;
     }
+    new MutationObserver(() => {
+      if (appearanceReady) apply();
+    }).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-cw-theme"]
+    });
     function settings() {
       const box = dialog("Make Chat yours");
       box.append(
@@ -777,6 +783,7 @@ View thread: ${url}`;
           if (!old || c.seen > old.seen) recent.set(c.url, c);
         }
         p = preferences(raw);
+        appearanceReady = true;
         apply();
       }
     };

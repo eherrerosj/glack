@@ -18,7 +18,8 @@ export function experience(
   let p = preferences(),
     account = "",
     baseline = Date.now(),
-    active = false;
+    active = false,
+    appearanceReady = false;
   let route = location.pathname,
     visited = "";
   const seen = new Set<string>(),
@@ -106,7 +107,7 @@ export function experience(
   }
   function apply() {
     const root = document.documentElement;
-    root.dataset.cwTheme = p.theme;
+    if (root.dataset.cwTheme !== p.theme) root.dataset.cwTheme = p.theme;
     root.classList.toggle("cw-styled", p.theme !== "native");
     root.classList.toggle("cw-compact", p.compact);
     root.classList.toggle("cw-hide-media", p.collapseMedia);
@@ -115,6 +116,14 @@ export function experience(
     const workbench = document.getElementById("cw-host");
     if (workbench) workbench.dataset.theme = p.theme;
   }
+  // Chat can replace the root class attribute while its app shell hydrates.
+  // Restore only Glack's owned attributes, retaining Google's other classes.
+  new MutationObserver(() => {
+    if (appearanceReady) apply();
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class", "data-cw-theme"],
+  });
   function settings() {
     const box = dialog("Make Chat yours");
     box.append(
@@ -659,6 +668,7 @@ export function experience(
         if (!old || c.seen > old.seen) recent.set(c.url, c);
       }
       p = preferences(raw);
+      appearanceReady = true;
       apply();
     },
   };

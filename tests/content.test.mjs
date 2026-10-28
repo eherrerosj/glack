@@ -275,3 +275,19 @@ test("duplicate injection does not create a second appearance controller", async
     f.w.close();
   }
 });
+test("appearance survives Chat replacing root classes without removing native classes", async () => {
+  const f = fixture();
+  try {
+    await settle();
+    const root = f.w.document.documentElement;
+    root.className = "google-shell-hydrated";
+    root.removeAttribute("data-cw-theme");
+    await settle();
+    assert.ok(root.classList.contains("google-shell-hydrated"));
+    assert.ok(root.classList.contains("cw-styled"));
+    assert.ok(root.classList.contains("cw-compact"));
+    assert.equal(root.dataset.cwTheme, "aubergine");
+  } finally {
+    f.w.close();
+  }
+});
