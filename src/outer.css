@@ -421,7 +421,7 @@ html.cw-styled .cw-workspace-rail {
   align-items: center;
   gap: 12px;
   padding: 12px 0;
-  z-index: 80;
+  z-index: 0;
 }
 .cw-workspace-rail button {
   border: 0;
