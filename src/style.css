@@ -374,3 +374,41 @@ p {
     transition: none !important;
   }
 }
+:host([data-theme]:not([data-theme="native"])) {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #1d1c1d;
+}
+:host([data-theme]:not([data-theme="native"])) .cw-launcher {
+  display: none;
+}
+:host([data-theme]:not([data-theme="native"])) .cw-panel {
+  background: #fff;
+  border-color: #ddd;
+  border-radius: 10px;
+}
+:host([data-theme]:not([data-theme="native"])) .primary {
+  background: #611f69;
+  color: #fff;
+}
+:host([data-theme="dark"][data-theme]) {
+  color: #d1d2d3;
+}
+:host([data-theme="dark"][data-theme])
+  :is(
+    .cw-panel,
+    .cw-card,
+    .cw-input,
+    .cw-select,
+    .cw-btn,
+    .cw-preset,
+    .cw-tab,
+    .cw-head,
+    .cw-tabs
+  ) {
+  background: #1a1d21;
+  color: #d1d2d3;
+  border-color: #414348;
+}
+:host([data-theme="dark"][data-theme]) :is(.cw-muted, .cw-meta, .cw-eyebrow) {
+  color: #aaa;
+}

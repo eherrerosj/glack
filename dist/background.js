@@ -1,5 +1,21 @@
 "use strict";
 (() => {
+  // src/preferences.ts
+  function preferences(raw = {}) {
+    return {
+      theme: ["aubergine", "light", "dark", "ocean", "native"].includes(
+        raw?.theme
+      ) ? raw.theme : "aubergine",
+      compact: typeof raw?.compact === "boolean" ? raw.compact : true,
+      collapseMedia: raw?.collapseMedia === true,
+      code: raw?.code !== false,
+      keywords: (Array.isArray(raw?.keywords) ? raw.keywords : []).filter((x) => typeof x === "string").map((x) => x.trim().slice(0, 80)).filter(
+        (x, i, all) => x && all.findIndex((v) => v.toLowerCase() === x.toLowerCase()) === i
+      ).slice(0, 30),
+      alerts: raw?.alerts === true
+    };
+  }
+
   // src/core.ts
   var emptyState = () => ({
     version: 1,
@@ -66,6 +82,38 @@
       try {
         const state = await read(msg.account);
         switch (msg.type) {
+          case "visit": {
+            if (!safeLink(msg.url ?? "") || typeof msg.name !== "string")
+              throw Error("Invalid conversation");
+            state.recent = [
+              { name: msg.name.slice(0, 200), url: msg.url, seen: Date.now() },
+              ...(state.recent ?? []).filter((c) => c.url !== msg.url)
+            ].slice(0, 80);
+            break;
+          }
+          case "preferences":
+            state.preferences = preferences(msg.preferences);
+            break;
+          case "radar": {
+            if (!state.preferences?.alerts || !safeLink(msg.url ?? ""))
+              throw Error("Radar alerts disabled");
+            const k = `radar:${msg.account}:${String(msg.id).slice(0, 300)}`;
+            if ((await chrome.storage.session.get(k))[k]) {
+              reply({ state });
+              return;
+            }
+            await chrome.storage.session.set({ [k]: true });
+            const id = `radar:${crypto.randomUUID()}`;
+            await chrome.storage.session.set({ [id]: msg.url });
+            await chrome.notifications.create(id, {
+              type: "basic",
+              iconUrl: "icon.png",
+              title: "Keyword radar",
+              message: String(msg.text).slice(0, 240)
+            });
+            reply({ state });
+            return;
+          }
           case "read":
             reply({ state });
             return;
@@ -107,6 +155,8 @@
           }
           case "import": {
             const backup = validateBackup(msg.backup);
+            if (backup.preferences)
+              state.preferences = preferences(backup.preferences);
             for (const item of backup.items)
               state.items = upsert(state.items, item);
             for (const section of backup.sections)
@@ -164,6 +214,12 @@
     });
   });
   async function openReminder(id) {
+    if (id.startsWith("radar:")) {
+      const url = (await chrome.storage.session.get(id))[id];
+      if (typeof url === "string" && safeLink(url))
+        await chrome.tabs.create({ url });
+      return;
+    }
     try {
       const [account, itemId] = JSON.parse(id);
       const item = (await read(account)).items.find((x) => x.id === itemId);

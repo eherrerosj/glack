@@ -115,3 +115,82 @@ test("unconfirmed reply never triggers root send", async () => {
     f.dom.window.close();
   }
 });
+test("switcher keyboard navigation filters sidebar conversations and Escape restores focus", async () => {
+  const f = fixture();
+  try {
+    await settle();
+    const nav = f.w.document.createElement("div");
+    nav.innerHTML =
+      '<div role="link"><i data-hovercard-id="space/alpha"></i><bdi>Project Alpha</bdi></div><div role="link"><i data-hovercard-id="space/beta"></i><bdi>Project Beta</bdi></div>';
+    f.w.document.body.append(nav);
+    f.editors[0].focus();
+    f.w.document.dispatchEvent(
+      new f.w.KeyboardEvent("keydown", {
+        key: "k",
+        metaKey: true,
+        bubbles: true,
+      }),
+    );
+    const s = f.w.document.querySelector("#cw-experience").shadowRoot;
+    const input = s.querySelector("input");
+    input.value = "pjlp";
+    input.dispatchEvent(new f.w.Event("input"));
+    assert.match(s.querySelector("[role=option]").textContent, /Alpha/);
+    assert.equal(s.querySelectorAll("[role=option]").length, 1);
+    input.dispatchEvent(
+      new f.w.KeyboardEvent("keydown", {
+        key: "Escape",
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    assert.equal(s.querySelector("[role=dialog]"), null);
+    assert.equal(f.w.document.activeElement, f.editors[0]);
+  } finally {
+    f.dom.window.close();
+  }
+});
+test("code viewer preserves literal markup as text and shows numbered lines", async () => {
+  const f = fixture();
+  try {
+    await settle();
+    const body = f.w.document.querySelector("[jsname=bgckF]");
+    const pre = f.w.document.createElement("pre");
+    pre.textContent =
+      'const value = "<img src=x onerror=alert(1)>";\nreturn value;';
+    body.replaceChildren(pre);
+    await new Promise((r) => setTimeout(r, 350));
+    f.w.document.querySelector(".cw-code-button").click();
+    const s = f.w.document.querySelector("#cw-experience").shadowRoot;
+    assert.equal(s.querySelectorAll(".code-line").length, 2);
+    assert.equal(s.querySelector("img"), null);
+    assert.match(s.querySelector(".code-view").textContent, /<img src=x/);
+  } finally {
+    f.dom.window.close();
+  }
+});
+test("media toggles retain emoji and can reveal a collapsed attachment", async () => {
+  const f = fixture();
+  try {
+    await settle();
+    const row = f.w.document.querySelector("[data-id=parent]");
+    const img = f.w.document.createElement("img");
+    img.width = 200;
+    img.alt = "Test image";
+    const emoji = f.w.document.createElement("img");
+    emoji.width = 18;
+    emoji.alt = "smile emoji";
+    row.append(img, emoji);
+    await new Promise((r) => setTimeout(r, 350));
+    assert.ok(img.classList.contains("cw-media"));
+    assert.ok(!emoji.classList.contains("cw-media"));
+    const b = row.querySelector(".cw-media-toggle");
+    b.click();
+    assert.ok(row.classList.contains("cw-media-expanded"));
+    assert.equal(b.getAttribute("aria-expanded"), "true");
+    b.click();
+    assert.ok(!row.classList.contains("cw-media-expanded"));
+  } finally {
+    f.dom.window.close();
+  }
+});

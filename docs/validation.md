@@ -34,3 +34,11 @@ Space: Workbench Lab — Cedar 4827 (`AAQAhLYm8MM`), private, one member verifie
 - Early integration failures left the original reply or root draft intact and did not retry automatically.
 
 This remains DOM-level confirmation, not an official API receipt. Google UI changes can require adapter updates.
+
+## 0.2 productivity additions
+
+- 29 tests pass; strict TypeScript check and production build pass.
+- Live PWA: Cmd+K fuzzy query `ced4827` finds the private Space; themes and radar preferences survive reloads; code sample sent in the private Space, confirmed delivered, viewer opened and Copy changed to Copied.
+- Screenshot review found and fixed sidebar clipping, native bubble alignment, dark-theme token specificity, hard-coded white header/composer surfaces, and DM discovery (individual DMs expose data-group-id on their list item).
+- Temporary keyword `Workbench test` and alert opt-in were removed after testing. Labelled private code sample remains available for user testing.
+- Notification dedupe, account isolation, media exclusion/reveal, and malicious code text rendering have automated fixture coverage. OS notification display and real attachment collapse were not independently visually verified in this pass.

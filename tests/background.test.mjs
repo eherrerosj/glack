@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import vm from "node:vm";
 import { readFile } from "node:fs/promises";
 async function harness() {
+  const session = {};
   const db = {},
     alarms = new Map(),
     notifications = [];
@@ -10,6 +11,10 @@ async function harness() {
   const event = (name) => ({ addListener: (fn) => (listeners[name] = fn) });
   const chrome = {
     storage: {
+      session: {
+        get: async (k) => ({ [k]: session[k] }),
+        set: async (x) => Object.assign(session, x),
+      },
       local: {
         get: async (k) =>
           k === null ? structuredClone(db) : { [k]: structuredClone(db[k]) },
@@ -37,7 +42,7 @@ async function harness() {
   };
   vm.runInNewContext(
     await readFile(new URL("../dist/background.js", import.meta.url), "utf8"),
-    { chrome, console, Date, JSON, Promise, URL },
+    { chrome, console, Date, JSON, Promise, URL, crypto },
   );
   const rpc = (data, account = "a@example.com") =>
     new Promise((resolve) =>
@@ -96,4 +101,31 @@ test("invalid reminder does not mutate stored data", async () => {
     /future/,
   );
   assert.equal((await h.rpc({ type: "read" })).state.items.length, 0);
+});
+
+test("radar notifications respect opt-in and deduplicate per account", async () => {
+  const h = await harness();
+  const match = { type: "radar", id: "one", text: "incident", url: item.url };
+  assert.match((await h.rpc(match)).error, /disabled/);
+  await h.rpc({
+    type: "preferences",
+    preferences: { alerts: true, keywords: ["incident"], theme: "dark" },
+  });
+  await Promise.all([h.rpc(match), h.rpc(match)]);
+  assert.equal(h.notifications.length, 1);
+  assert.equal((await h.rpc({ type: "read" })).state.preferences.theme, "dark");
+  assert.equal(
+    (await h.rpc({ type: "read" }, "b@example.com")).state.preferences,
+    undefined,
+  );
+});
+test("recent conversations survive reads and stay scoped to the account", async () => {
+  const h = await harness();
+  await h.rpc({ type: "visit", name: "Lab", url: item.url });
+  await h.rpc({ type: "visit", name: "Lab", url: item.url });
+  assert.equal((await h.rpc({ type: "read" })).state.recent.length, 1);
+  assert.equal(
+    (await h.rpc({ type: "read" }, "b@example.com")).state.recent,
+    undefined,
+  );
 });

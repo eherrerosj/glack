@@ -1,3 +1,4 @@
+import { experience } from "./experience";
 import {
   emptyState,
   sameText,
@@ -65,6 +66,7 @@ function start() {
     shadow.append(t);
     setTimeout(() => t.remove(), 6500);
   }
+  const extras = experience(() => identity, rpc, toast);
   async function rpc(data: Record<string, unknown>) {
     if (!identity)
       throw Error(
@@ -78,6 +80,7 @@ function start() {
     if (requestedAccount !== identity) return state;
     if (result.error) throw Error(result.error);
     state = result.state;
+    extras.update(state.preferences, state.recent);
     render();
     return state;
   }
@@ -232,6 +235,10 @@ function start() {
       return;
     }
     if (view === "settings") {
+      body.append(
+        button("🎨 Appearance & productivity", extras.settings),
+        button("⌘ K · Jump to conversation", extras.switcher),
+      );
       const importer = el("input", "cw-input");
       importer.type = "file";
       importer.accept = ".json";
@@ -682,9 +689,11 @@ function start() {
       identity = next;
       selected = null;
       state = emptyState();
+      extras.update(state.preferences, state.recent);
       if (next) act(() => rpc({ type: "read" }));
       else render();
     }
+    extras.scan();
     enhanceMessages();
     enhanceComposers();
     const shortcut = document.querySelector<HTMLElement>(
@@ -694,6 +703,17 @@ function start() {
       const nav = button("◷  Later", () => show(), "cw-nav");
       nav.id = "cw-nav";
       shortcut.parentElement.append(nav);
+      const prefs = button(
+        "✦  Appearance",
+        extras.settings,
+        "cw-nav cw-appearance",
+      );
+      const jump = button(
+        "⌕  Jump to…   ⌘ K",
+        extras.switcher,
+        "cw-nav cw-jump",
+      );
+      shortcut.parentElement.append(jump, prefs);
     }
     if (sessionStorage.getItem("cw-reply-target")) {
       const target = sessionStorage.getItem("cw-reply-target")!.split("/");
@@ -748,6 +768,7 @@ function start() {
       state =
         (changes[`account:${identity}`].newValue as State | undefined) ??
         emptyState();
+      extras.update(state.preferences, state.recent);
       render();
     }
   });

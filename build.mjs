@@ -18,7 +18,7 @@ await writeFile(
     {
       manifest_version: 3,
       name: "Chat Workbench",
-      version: "0.1.0",
+      version: "0.2.0",
       description:
         "A quieter Google Chat: Later, local reminders, collections and thread broadcasts.",
       permissions: ["storage", "alarms", "notifications"],

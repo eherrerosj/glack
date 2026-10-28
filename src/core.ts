@@ -1,3 +1,4 @@
+import type { Preferences } from "./preferences";
 export interface Item {
   id: string;
   text: string;
@@ -17,6 +18,8 @@ export interface Section {
 }
 export interface State {
   version: 1;
+  preferences?: Preferences;
+  recent?: { name: string; url: string; seen: number }[];
   items: Item[];
   sections: Section[];
 }
