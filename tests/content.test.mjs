@@ -40,7 +40,8 @@ function fixture({ occupied = false, failReply = false } = {}) {
     const row = w.document.createElement("div");
     row.setAttribute("data-id", "reply");
     row.setAttribute("data-message-multiplat-item-id", "MSG/reply");
-    row.innerHTML = '<div jsname="bgckF">Resolved</div>';
+    row.innerHTML =
+      '<div jsname="bgckF">Resolved</div><span data-absolute-timestamp="123">Now</span>';
     w.document.querySelector("[data-local-topic-id]").append(row);
     editors[1].textContent = "";
   };
@@ -56,6 +57,9 @@ function fixture({ occupied = false, failReply = false } = {}) {
     text.setAttribute("jsname", "bgckF");
     text.textContent = editors[0].textContent;
     row.append(text);
+    const stamp = w.document.createElement("span");
+    stamp.setAttribute("data-absolute-timestamp", "123");
+    row.append(stamp);
     topic.append(row);
     w.document.body.append(topic);
     editors[0].textContent = "";

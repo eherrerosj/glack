@@ -18,7 +18,7 @@ Build a local-first MV3 Chrome extension, inspect Chat Plus before choosing inte
 3. Later/reminders/storage validation: complete for documented tests.
 4. Native section compatibility and local collections: implemented; no aggregate unread enhancement.
 5. Load into Chrome and desktop app: complete.
-6. Live outbound broadcast validation: awaiting user's designated test Space.
+6. Live outbound broadcast validation: complete in a private owner-only test Space, including keyboard send and occupied-draft recovery.
 7. Independent inline reply composer, mobile sync and native bot reminders: beyond the local build; native reply navigation/local notifications substitute as disclosed in README.
 
-The installed build is a usable local preview, not a claim of complete RFC parity or live-verified broadcasting.
+The installed build is a usable local preview, not a claim of complete RFC parity. Broadcasting has been verified live within its documented plain-text scope.

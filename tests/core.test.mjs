@@ -65,3 +65,11 @@ test("backup validation rejects executable links and malformed data", async () =
     1,
   );
 });
+test("composer comparison tolerates Chat collapsing empty lines", async () => {
+  const { sameText } = await import("../src/core.ts");
+  assert.equal(
+    sameText("Parent\n\nReply\n\nLink", "Parent\nReply\nLink"),
+    true,
+  );
+  assert.equal(sameText("Reply one", "Reply two"), false);
+});

@@ -1,5 +1,6 @@
 import {
   emptyState,
+  sameText,
   reminderTime,
   broadcastText,
   canBroadcast,
@@ -9,6 +10,7 @@ import {
 } from "./core";
 import {
   account,
+  confirmed,
   message,
   rows,
   editorSelector,
@@ -595,7 +597,8 @@ function start() {
     busy = true;
     check.checked = false;
     try {
-      await Promise.resolve();
+      // Chrome ignores a nested click until the original native click task ends.
+      await new Promise((resolve) => setTimeout(resolve, 0));
       sendButton(editor)?.click();
       toast("Sending reply…");
       await waitFor(() => {
@@ -603,10 +606,9 @@ function start() {
         return [...document.querySelectorAll<HTMLElement>(rows)].find(
           (r) =>
             !before.has(r.dataset.id) &&
+            confirmed(r) &&
             r.closest<HTMLElement>("[data-local-topic-id]")?.dataset
               .localTopicId === tid &&
-            r.closest<HTMLElement>("[data-local-topic-id]")?.dataset
-              .isLocalOnly === "false" &&
             r.dataset.id &&
             !r.dataset.id.startsWith("local") &&
             textOf(r.querySelector<HTMLElement>('[jsname="bgckF"]') ?? r) ===
@@ -639,7 +641,11 @@ function start() {
           ? b
           : null;
       }, 3000);
-      if (location.href !== url || identity !== a || textOf(root) !== copy)
+      if (
+        location.href !== url ||
+        identity !== a ||
+        !sameText(textOf(root), copy)
+      )
         throw Error("Reply sent. Review the broadcast draft before sending.");
       const rootsBefore = new Set(
         [...document.querySelectorAll<HTMLElement>(rows)].map(
@@ -651,10 +657,11 @@ function start() {
         [...document.querySelectorAll<HTMLElement>(rows)].find(
           (r) =>
             !rootsBefore.has(r.dataset.id) &&
-            r.closest<HTMLElement>("[data-local-topic-id]")?.dataset
-              .isLocalOnly === "false" &&
-            textOf(r.querySelector<HTMLElement>('[jsname="bgckF"]') ?? r) ===
+            confirmed(r) &&
+            sameText(
+              textOf(r.querySelector<HTMLElement>('[jsname="bgckF"]') ?? r),
               copy,
+            ),
         ),
       );
       toast("Reply and Space broadcast sent");

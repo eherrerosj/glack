@@ -36,4 +36,4 @@ After rebuilding, open chrome://extensions, click Reload on Chat Workbench, then
 
 ## Validation
 
-See docs/validation.md and docs/chat-plus-review.md. Live outbound broadcast testing requires a designated test Space; no colleague-facing test messages have been sent.
+See docs/validation.md and docs/chat-plus-review.md. Live broadcasting was verified in the private, owner-only Space [Workbench Lab — Cedar 4827](https://chat.google.com/room/AAQAhLYm8MM). Both send-button and Enter-key paths work, and an occupied Space draft blocks sending while preserving both drafts. All outgoing test messages were confined to this Space.

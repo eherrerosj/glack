@@ -21,10 +21,8 @@ export function message(
   const id = row.dataset.id;
   const tid = topic?.dataset.localTopicId;
   if (!group || !id || !tid) return null;
-  const text =
-    row.querySelector<HTMLElement>('[jsname="bgckF"]')?.innerText ??
-    row.querySelector('[jsname="bgckF"]')?.textContent ??
-    "";
+  const body = row.querySelector<HTMLElement>('[jsname="bgckF"]');
+  const text = body ? textOf(body) : "";
   const sender =
     row.querySelector('h3,[role="heading"][aria-level="3"]')?.textContent ??
     row.querySelector("[data-name]")?.getAttribute("data-name") ??
@@ -62,7 +60,20 @@ export function sendButton(editor: HTMLElement): HTMLElement | null {
   );
 }
 export function textOf(e: HTMLElement) {
-  return (e.innerText ?? e.textContent ?? "").trim();
+  const read = (node: Node): string => {
+    if (node.nodeType === 3) return node.textContent ?? "";
+    if (node.nodeType !== 1) return "";
+    const element = node as HTMLElement;
+    if (element.tagName === "IMG") return element.getAttribute("alt") ?? "";
+    if (element.tagName === "BR") return "\n";
+    const text = [...element.childNodes].map(read).join("");
+    return /^(DIV|P|LI|BLOCKQUOTE|PRE)$/.test(element.tagName)
+      ? "\n" + text + "\n"
+      : text;
+  };
+  return read(e)
+    .replace(/\n{2,}/g, "\n")
+    .trim();
 }
 export function putDraft(editor: HTMLElement, text: string) {
   editor.focus();
@@ -107,4 +118,17 @@ export function waitFor<T>(
     };
     tick();
   });
+}
+export function confirmed(row: HTMLElement) {
+  const stamp = Number(
+    row
+      .querySelector("[data-absolute-timestamp]")
+      ?.getAttribute("data-absolute-timestamp"),
+  );
+  return (
+    stamp > 0 &&
+    !/Sending|Retry|Failed to send/i.test(
+      row.querySelector('[jsname="E53oB"]')?.textContent ?? "",
+    )
+  );
 }

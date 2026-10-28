@@ -103,3 +103,6 @@ export function validateBackup(value: unknown): State {
       throw Error("Backup contains an invalid collection");
   return structuredClone(s);
 }
+export function sameText(a: string, b: string) {
+  return a.replace(/\s+/g, " ").trim() === b.replace(/\s+/g, " ").trim();
+}

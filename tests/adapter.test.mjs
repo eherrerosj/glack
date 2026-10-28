@@ -19,3 +19,30 @@ test("does not save unidentified rows under a guessed context", () => {
   const { document } = new JSDOM('<div data-id="a">Hi</div>').window;
   assert.equal(message(document.querySelector("div"), document), null);
 });
+test("confirmation rejects sending rows even inside a confirmed parent thread", async () => {
+  const { confirmed } = await import("../src/adapter.ts");
+  const { document } = new JSDOM(
+    '<c-wiz data-is-local-only="false"><div data-id="id"><span jsname="E53oB">Sending…</span></div></c-wiz>',
+  ).window;
+  const r = document.querySelector("[data-id]");
+  assert.equal(confirmed(r), false);
+  r.innerHTML = '<span data-absolute-timestamp="1793177623905">Now</span>';
+  assert.equal(confirmed(r), true);
+});
+test("message text retains emoji converted by Chat into images", async () => {
+  const { textOf } = await import("../src/adapter.ts");
+  const { document } = new JSDOM(
+    '<div id="body"><img alt="↪"> Replied to thread:<div>Reply</div><div>View thread</div></div>',
+  ).window;
+  assert.equal(
+    textOf(document.querySelector("#body")),
+    "↪ Replied to thread:\nReply\nView thread",
+  );
+});
+test("sent status does not depend on the cached topic local-only flag", async () => {
+  const { confirmed } = await import("../src/adapter.ts");
+  const { document } = new JSDOM(
+    '<c-wiz data-is-local-only="true"><div data-id="server-id"><span jsname="E53oB" data-absolute-timestamp="1793177623905">Now</span></div></c-wiz>',
+  ).window;
+  assert.equal(confirmed(document.querySelector("[data-id]")), true);
+});

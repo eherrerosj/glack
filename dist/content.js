@@ -25,6 +25,9 @@ View thread: ${url}`;
   function canBroadcast(s) {
     return s.sameContext && s.rootEmpty && s.replyConfirmed && !s.richContent;
   }
+  function sameText(a, b) {
+    return a.replace(/\s+/g, " ").trim() === b.replace(/\s+/g, " ").trim();
+  }
 
   // src/adapter.ts
   var rows = "[data-message-multiplat-item-id][data-id]";
@@ -44,7 +47,8 @@ View thread: ${url}`;
     const id = row.dataset.id;
     const tid = topic?.dataset.localTopicId;
     if (!group || !id || !tid) return null;
-    const text = row.querySelector('[jsname="bgckF"]')?.innerText ?? row.querySelector('[jsname="bgckF"]')?.textContent ?? "";
+    const body = row.querySelector('[jsname="bgckF"]');
+    const text = body ? textOf(body) : "";
     const sender = row.querySelector('h3,[role="heading"][aria-level="3"]')?.textContent ?? row.querySelector("[data-name]")?.getAttribute("data-name") ?? "Message";
     const a = account(doc);
     return {
@@ -71,7 +75,16 @@ View thread: ${url}`;
     ) ?? null;
   }
   function textOf(e) {
-    return (e.innerText ?? e.textContent ?? "").trim();
+    const read = (node) => {
+      if (node.nodeType === 3) return node.textContent ?? "";
+      if (node.nodeType !== 1) return "";
+      const element = node;
+      if (element.tagName === "IMG") return element.getAttribute("alt") ?? "";
+      if (element.tagName === "BR") return "\n";
+      const text = [...element.childNodes].map(read).join("");
+      return /^(DIV|P|LI|BLOCKQUOTE|PRE)$/.test(element.tagName) ? "\n" + text + "\n" : text;
+    };
+    return read(e).replace(/\n{2,}/g, "\n").trim();
   }
   function putDraft(editor, text) {
     editor.focus();
@@ -113,6 +126,14 @@ View thread: ${url}`;
       };
       tick();
     });
+  }
+  function confirmed(row) {
+    const stamp = Number(
+      row.querySelector("[data-absolute-timestamp]")?.getAttribute("data-absolute-timestamp")
+    );
+    return stamp > 0 && !/Sending|Retry|Failed to send/i.test(
+      row.querySelector('[jsname="E53oB"]')?.textContent ?? ""
+    );
   }
 
   // src/style.css
@@ -652,13 +673,13 @@ View thread: ${url}`;
       busy = true;
       check.checked = false;
       try {
-        await Promise.resolve();
+        await new Promise((resolve) => setTimeout(resolve, 0));
         sendButton(editor)?.click();
         toast("Sending reply\u2026");
         await waitFor(() => {
           if (location.href !== url || identity !== a) return null;
           return [...document.querySelectorAll(rows)].find(
-            (r) => !before.has(r.dataset.id) && r.closest("[data-local-topic-id]")?.dataset.localTopicId === tid && r.closest("[data-local-topic-id]")?.dataset.isLocalOnly === "false" && r.dataset.id && !r.dataset.id.startsWith("local") && textOf(r.querySelector('[jsname="bgckF"]') ?? r) === text
+            (r) => !before.has(r.dataset.id) && confirmed(r) && r.closest("[data-local-topic-id]")?.dataset.localTopicId === tid && r.dataset.id && !r.dataset.id.startsWith("local") && textOf(r.querySelector('[jsname="bgckF"]') ?? r) === text
           );
         });
         if (!canBroadcast({
@@ -680,7 +701,7 @@ View thread: ${url}`;
           const b = sendButton(root);
           return b && !b.hasAttribute("disabled") && b.getAttribute("aria-disabled") !== "true" ? b : null;
         }, 3e3);
-        if (location.href !== url || identity !== a || textOf(root) !== copy)
+        if (location.href !== url || identity !== a || !sameText(textOf(root), copy))
           throw Error("Reply sent. Review the broadcast draft before sending.");
         const rootsBefore = new Set(
           [...document.querySelectorAll(rows)].map(
@@ -690,7 +711,10 @@ View thread: ${url}`;
         send.click();
         await waitFor(
           () => [...document.querySelectorAll(rows)].find(
-            (r) => !rootsBefore.has(r.dataset.id) && r.closest("[data-local-topic-id]")?.dataset.isLocalOnly === "false" && textOf(r.querySelector('[jsname="bgckF"]') ?? r) === copy
+            (r) => !rootsBefore.has(r.dataset.id) && confirmed(r) && sameText(
+              textOf(r.querySelector('[jsname="bgckF"]') ?? r),
+              copy
+            )
           )
         );
         toast("Reply and Space broadcast sent");
