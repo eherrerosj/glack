@@ -856,3 +856,27 @@ html.cw-styled[data-cw-mode="dark"] {
   cursor: pointer;
   white-space: nowrap;
 }
+/* Gemini sessions use a separate white app surface outside the normal chat shell. */
+html.cw-styled .Bqp03e,
+html.cw-styled .Bqp03e > d-view {
+  background: var(--cw-bg) !important;
+  color: var(--cw-text) !important;
+}
+html.cw-styled .cw-message-row {
+  background: var(--cw-bg) !important;
+}
+html.cw-styled .cw-message-row:hover {
+  background: var(--cw-hover) !important;
+}
+html.cw-styled .cw-sidebar .qydpp.pGYfl {
+  background: var(--cw-selected) !important;
+  color: #fff !important;
+}
+html.cw-styled .cw-sidebar .qydpp.pGYfl :is(span, svg) {
+  color: #fff !important;
+}
+html.cw-styled[data-cw-mode="dark"] .cw-message-row :is(button, [role="button"]) {
+  background-color: var(--cw-hover) !important;
+  color: var(--cw-text) !important;
+  border-color: var(--cw-border) !important;
+}

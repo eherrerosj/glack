@@ -76,12 +76,12 @@ export function resolvedMode(mode: Preferences["mode"], systemDark: boolean) {
   return mode === "system" ? (systemDark ? "dark" : "light") : mode;
 }
 export const palettes: Record<string, [string, string, string]> = {
-  aubergine: ["#350d36", "#4a154b", "#a567b0"],
-  light: ["#343640", "#eae5ef", "#81708f"],
-  dark: ["#121016", "#242229", "#a99bbd"],
-  ocean: ["#062f40", "#114b5f", "#2c9ab6"],
-  forest: ["#153c32", "#245847", "#3b9876"],
-  rose: ["#542b3a", "#763f53", "#c66989"],
-  lavender: ["#352d58", "#514673", "#9881d2"],
-  sunset: ["#543222", "#754931", "#c77b49"],
+  aubergine: ["#350d36", "#4a154b", "#86418f"],
+  light: ["#343640", "#eae5ef", "#675775"],
+  dark: ["#121016", "#242229", "#62596e"],
+  ocean: ["#062f40", "#114b5f", "#15647a"],
+  forest: ["#153c32", "#245847", "#286b53"],
+  rose: ["#542b3a", "#763f53", "#87445d"],
+  lavender: ["#352d58", "#514673", "#65528c"],
+  sunset: ["#543222", "#754931", "#8b542d"],
 };

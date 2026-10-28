@@ -1,6 +1,6 @@
 const paths: Record<string, string> = {
   glack:
-    "M7 4h10a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4h-6l-6 3v-4a4 4 0 0 1-2-3V8a4 4 0 0 1 4-4 M8 9h8 M8 13h5",
+    "M18 5H8a5 5 0 0 0-5 5v8l4-3h6 M6 19h10a5 5 0 0 0 5-5V6l-4 3h-6 M9 12h6",
   search: "M21 21l-5-5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
   later: "M12 8v5l3 2 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0",
   media:

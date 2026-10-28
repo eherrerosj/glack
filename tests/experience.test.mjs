@@ -34,3 +34,16 @@ test("mode migration preserves old dark choices and validates all new palettes",
   assert.equal(resolvedMode("light", true), "light");
   assert.equal(resolvedMode("dark", false), "dark");
 });
+test("every palette supports readable white selected-navigation labels", async () => {
+  const { palettes } = await import("../src/preferences.ts");
+  function luminance(hex) {
+    const c = hex
+      .slice(1)
+      .match(/../g)
+      .map((v) => parseInt(v, 16) / 255)
+      .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+    return c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
+  }
+  for (const [name, colors] of Object.entries(palettes))
+    assert.ok(1.05 / (luminance(colors[2]) + 0.05) >= 4.5, name);
+});
