@@ -1,3 +1,4 @@
+import { parseBroadcast } from "../src/core.ts";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -72,4 +73,23 @@ test("composer comparison tolerates Chat collapsing empty lines", async () => {
     true,
   );
   assert.equal(sameText("Reply one", "Reply two"), false);
+});
+test("broadcast presentation extracts context and preserves reply paragraphs", () => {
+  const text = broadcastText(
+    "First paragraph\n\nSecond paragraph",
+    "Original topic",
+    "https://chat.google.com/room/s/t/t?authuser=a%40b.com",
+  );
+  assert.deepEqual(parseBroadcast(text), {
+    parent: "Original topic",
+    reply: "First paragraph\n\nSecond paragraph",
+    url: "https://chat.google.com/room/s/t/t?authuser=a%40b.com",
+  });
+  assert.equal(parseBroadcast("Normal message"), null);
+  assert.equal(
+    parseBroadcast(
+      text.replace("https://chat.google.com", "https://evil.example"),
+    ),
+    null,
+  );
 });

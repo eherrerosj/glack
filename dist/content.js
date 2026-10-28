@@ -23,6 +23,52 @@
     return svg;
   }
 
+  // src/core.ts
+  var emptyState = () => ({
+    version: 1,
+    items: [],
+    sections: []
+  });
+  function reminderTime(preset, now = Date.now()) {
+    if (preset === "tomorrow") {
+      const d = new Date(now);
+      d.setDate(d.getDate() + 1);
+      d.setHours(9, 0, 0, 0);
+      return d.getTime();
+    }
+    return now + (preset === "20m" ? 20 : 60) * 6e4;
+  }
+  function safeLink(link) {
+    try {
+      const u = new URL(link);
+      return u.protocol === "https:" && u.hostname === "chat.google.com" && !u.username && !u.password;
+    } catch {
+      return false;
+    }
+  }
+  function broadcastText(text, parent, url) {
+    return `\u21AA Replied to thread: ${parent.replace(/\s+/g, " ").slice(0, 180)}
+
+${text}
+
+View thread: ${url}`;
+  }
+  function canBroadcast(s) {
+    return s.sameContext && s.rootEmpty && s.replyConfirmed && !s.richContent;
+  }
+  function sameText(a, b) {
+    return a.replace(/\s+/g, " ").trim() === b.replace(/\s+/g, " ").trim();
+  }
+  function parseBroadcast(text) {
+    const match = text.match(
+      /^↪ Replied to thread: ([^\n]+)\n+([\s\S]+?)\n+View thread:\s*(https:\/\/chat\.google\.com\/\S+)\s*$/
+    );
+    if (!match || !safeLink(match[3])) return null;
+    const url = new URL(match[3]);
+    if (!/^\/room\/[^/]+\/[^/]+\/[^/]+$/.test(url.pathname)) return null;
+    return { parent: match[1].trim(), reply: match[2].trim(), url: match[3] };
+  }
+
   // src/preferences.ts
   function preferences(raw = {}) {
     return {
@@ -547,6 +593,39 @@
         if (!body) continue;
         const item = message(row);
         if (!item) continue;
+        const broadcast = parseBroadcast(item.text);
+        let card = body.parentElement?.querySelector(
+          ":scope > .cw-broadcast-card"
+        );
+        if (broadcast && !body.closest('[contenteditable="true"]')) {
+          const signature = JSON.stringify(broadcast);
+          if (!card || card.dataset.content !== signature) {
+            card?.remove();
+            card = node("section", "", "cw-broadcast-card");
+            card.dataset.content = signature;
+            const context = node("div", "", "cw-thread-context");
+            context.append(
+              node("span", "Thread reply", "cw-thread-label"),
+              node("div", broadcast.parent, "cw-thread-parent")
+            );
+            const link = node(
+              "a",
+              "View thread \u2192",
+              "cw-thread-link"
+            );
+            link.href = broadcast.url;
+            card.append(
+              context,
+              node("p", broadcast.reply, "cw-broadcast-reply"),
+              link
+            );
+            body.after(card);
+          }
+          body.classList.add("cw-broadcast-original");
+        } else {
+          card?.remove();
+          body.classList.remove("cw-broadcast-original");
+        }
         let authorLine = row.querySelector(
           ":scope > .cw-author-line"
         );
@@ -565,10 +644,26 @@
         };
         const name = item.sender?.trim() || "Message";
         setText(authorLine.querySelector("strong"), name);
-        setText(
-          authorLine.querySelector(".cw-author-avatar"),
-          name.split(/\s+/).slice(0, 2).map((n) => n[0]).join("").toUpperCase()
-        );
+        const avatar = authorLine.querySelector(".cw-author-avatar");
+        const photo = row.querySelector(".HTZBof img") ?? (name === "You" ? document.querySelector(
+          '[aria-label*="Google Account"] img'
+        ) : null);
+        const photoUrl = photo?.currentSrc || photo?.src;
+        if (photoUrl && /^https:\/\//.test(photoUrl)) {
+          if (avatar.querySelector("img")?.getAttribute("src") !== photoUrl) {
+            const image = document.createElement("img");
+            image.src = photoUrl;
+            image.alt = "";
+            image.draggable = false;
+            avatar.replaceChildren(image);
+          }
+        } else {
+          const fullName = row.querySelector('[jsname="oU6v8b"]')?.getAttribute("data-name") || name;
+          setText(
+            avatar,
+            fullName.split(/\s+/).slice(0, 2).map((n) => n[0]).join("").toUpperCase()
+          );
+        }
         setText(
           authorLine.querySelector("time"),
           row.querySelector('[jsname="E53oB"]')?.textContent?.trim() ?? ""
@@ -620,7 +715,7 @@
         ].filter((e) => {
           if (e.tagName !== "IMG") return true;
           const image = e;
-          return !image.closest("[data-hovercard-id]") && !/emoji|avatar|profile/i.test(
+          return !image.closest("[data-hovercard-id],.cw-author-avatar,.HTZBof") && !/emoji|avatar|profile/i.test(
             image.className + " " + image.alt + " " + image.src
           ) && Math.max(image.width, image.naturalWidth) > 100;
         });
@@ -679,35 +774,6 @@
         apply();
       }
     };
-  }
-
-  // src/core.ts
-  var emptyState = () => ({
-    version: 1,
-    items: [],
-    sections: []
-  });
-  function reminderTime(preset, now = Date.now()) {
-    if (preset === "tomorrow") {
-      const d = new Date(now);
-      d.setDate(d.getDate() + 1);
-      d.setHours(9, 0, 0, 0);
-      return d.getTime();
-    }
-    return now + (preset === "20m" ? 20 : 60) * 6e4;
-  }
-  function broadcastText(text, parent, url) {
-    return `\u21AA Replied to thread: ${parent.replace(/\s+/g, " ").slice(0, 180)}
-
-${text}
-
-View thread: ${url}`;
-  }
-  function canBroadcast(s) {
-    return s.sameContext && s.rootEmpty && s.replyConfirmed && !s.richContent;
-  }
-  function sameText(a, b) {
-    return a.replace(/\s+/g, " ").trim() === b.replace(/\s+/g, " ").trim();
   }
 
   // src/style.css
@@ -1188,12 +1254,6 @@ View thread: ${url}`;
         );
         row.append(tools);
         row.classList.add("cw-message-row");
-        if (item.text.startsWith("\u21AA Replied to thread: ")) {
-          const badge = el("div", "cw-thread-badge", "\u21AA Replied to thread");
-          const author = row.querySelector(":scope > .cw-author-line");
-          if (author) author.after(badge);
-          else row.prepend(badge);
-        }
       }
     }
     function enhanceComposers() {

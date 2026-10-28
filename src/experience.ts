@@ -1,3 +1,4 @@
+import { parseBroadcast } from "./core";
 import { icon } from "./icons";
 import {
   preferences,
@@ -446,6 +447,40 @@ export function experience(
       if (!body) continue;
       const item = message(row);
       if (!item) continue;
+      const broadcast = parseBroadcast(item.text);
+      let card = body.parentElement?.querySelector<HTMLElement>(
+        ":scope > .cw-broadcast-card",
+      );
+      if (broadcast && !body.closest('[contenteditable="true"]')) {
+        const signature = JSON.stringify(broadcast);
+        if (!card || card.dataset.content !== signature) {
+          card?.remove();
+          card = node("section", "", "cw-broadcast-card");
+          card.dataset.content = signature;
+          const context = node("div", "", "cw-thread-context");
+          context.append(
+            node("span", "Thread reply", "cw-thread-label"),
+            node("div", broadcast.parent, "cw-thread-parent"),
+          );
+          const link = node(
+            "a",
+            "View thread →",
+            "cw-thread-link",
+          ) as HTMLAnchorElement;
+          link.href = broadcast.url;
+          card.append(
+            context,
+            node("p", broadcast.reply, "cw-broadcast-reply"),
+            link,
+          );
+          body.after(card);
+        }
+        body.classList.add("cw-broadcast-original");
+      } else {
+        card?.remove();
+        body.classList.remove("cw-broadcast-original");
+      }
+
       let authorLine = row.querySelector<HTMLElement>(
         ":scope > .cw-author-line",
       );
@@ -464,15 +499,38 @@ export function experience(
       };
       const name = item.sender?.trim() || "Message";
       setText(authorLine.querySelector("strong"), name);
-      setText(
-        authorLine.querySelector(".cw-author-avatar"),
-        name
-          .split(/\s+/)
-          .slice(0, 2)
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase(),
-      );
+      const avatar =
+        authorLine.querySelector<HTMLElement>(".cw-author-avatar")!;
+      const photo =
+        row.querySelector<HTMLImageElement>(".HTZBof img") ??
+        (name === "You"
+          ? document.querySelector<HTMLImageElement>(
+              '[aria-label*="Google Account"] img',
+            )
+          : null);
+      const photoUrl = photo?.currentSrc || photo?.src;
+      if (photoUrl && /^https:\/\//.test(photoUrl)) {
+        if (avatar.querySelector("img")?.getAttribute("src") !== photoUrl) {
+          const image = document.createElement("img");
+          image.src = photoUrl;
+          image.alt = "";
+          image.draggable = false;
+          avatar.replaceChildren(image);
+        }
+      } else {
+        const fullName =
+          row.querySelector('[jsname="oU6v8b"]')?.getAttribute("data-name") ||
+          name;
+        setText(
+          avatar,
+          fullName
+            .split(/\s+/)
+            .slice(0, 2)
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase(),
+        );
+      }
       setText(
         authorLine.querySelector("time"),
         row.querySelector('[jsname="E53oB"]')?.textContent?.trim() ?? "",
@@ -532,7 +590,7 @@ export function experience(
         if (e.tagName !== "IMG") return true;
         const image = e as HTMLImageElement;
         return (
-          !image.closest("[data-hovercard-id]") &&
+          !image.closest("[data-hovercard-id],.cw-author-avatar,.HTZBof") &&
           !/emoji|avatar|profile/i.test(
             image.className + " " + image.alt + " " + image.src,
           ) &&

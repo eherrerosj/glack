@@ -56,3 +56,14 @@ Fixed:
 - Resized preferences dialog so its footer remains visible, compacted theme selection, constrained switcher scrolling, and restyled Later/reminders/collections with shared theme colours and clearer titles.
 
 Validation: 32 tests, strict TypeScript, build and whitespace checks pass. Latest unpacked version is 0.2.1. Aubergine is left active. No new permissions or dependencies.
+
+## 0.2.2 screenshot-targeted corrections
+
+The user screenshot exposed duplicate broadcast headings, large whitespace, a native curved reply connector, raw thread URLs, placeholder initials and a white-on-white status control.
+
+- Recognised Workbench broadcast messages now have one compact context quote, the reply text and a labelled View thread link. The original Google message body remains in the DOM, unchanged, for saving, broadcasting confirmation and native-theme fallback. Rendering uses text nodes and validated Chat URLs; edited/non-matching messages revert to the original view.
+- Removed the empty native reply connector, retained the clickable reply count, tightened topic spacing and corrected status-control contrast.
+- Used existing native profile images where available, with initials as fallback. Avatar images are excluded from media collapse.
+- Shifted native hover actions to the right so they do not cover the author header.
+
+Validation: 34 automated tests pass, including broadcast parsing, malicious-text rendering, source-text preservation and edited-message cleanup. Type check/build pass. Live PWA verified the exact parent/broadcast area, working short link opening the correct thread drawer, profile photos, status icons and hover-action placement. No messages were sent or edited during this pass.

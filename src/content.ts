@@ -527,12 +527,6 @@ function start() {
       );
       row.append(tools);
       row.classList.add("cw-message-row");
-      if (item.text.startsWith("↪ Replied to thread: ")) {
-        const badge = el("div", "cw-thread-badge", "↪ Replied to thread");
-        const author = row.querySelector(":scope > .cw-author-line");
-        if (author) author.after(badge);
-        else row.prepend(badge);
-      }
     }
   }
   function enhanceComposers() {

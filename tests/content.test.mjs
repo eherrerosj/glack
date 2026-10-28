@@ -210,3 +210,29 @@ test("composer styling never marks an enclosing conversation as an editor", asyn
     f.dom.window.close();
   }
 });
+test("broadcast card preserves original message text and renders reply text safely", async () => {
+  const f = fixture();
+  try {
+    await settle();
+    const body = f.w.document.querySelector("[jsname=bgckF]");
+    const source =
+      "↪ Replied to thread: Original context\n\n<img src=x onerror=alert(1)>\n\nView thread: https://chat.google.com/room/test/parent/parent";
+    body.textContent = source;
+    await new Promise((r) => setTimeout(r, 350));
+    const card = f.w.document.querySelector(".cw-broadcast-card");
+    assert.ok(card);
+    assert.equal(body.textContent, source);
+    assert.equal(card.querySelector("img"), null);
+    assert.equal(card.querySelector("a").textContent, "View thread →");
+    assert.match(
+      card.querySelector(".cw-broadcast-reply").textContent,
+      /<img src=x/,
+    );
+    body.textContent = "Edited ordinary message";
+    await new Promise((r) => setTimeout(r, 350));
+    assert.equal(f.w.document.querySelector(".cw-broadcast-card"), null);
+    assert.ok(!body.classList.contains("cw-broadcast-original"));
+  } finally {
+    f.dom.window.close();
+  }
+});

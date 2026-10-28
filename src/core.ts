@@ -109,3 +109,14 @@ export function validateBackup(value: unknown): State {
 export function sameText(a: string, b: string) {
   return a.replace(/\s+/g, " ").trim() === b.replace(/\s+/g, " ").trim();
 }
+export function parseBroadcast(
+  text: string,
+): { parent: string; reply: string; url: string } | null {
+  const match = text.match(
+    /^↪ Replied to thread: ([^\n]+)\n+([\s\S]+?)\n+View thread:\s*(https:\/\/chat\.google\.com\/\S+)\s*$/,
+  );
+  if (!match || !safeLink(match[3])) return null;
+  const url = new URL(match[3]);
+  if (!/^\/room\/[^/]+\/[^/]+\/[^/]+$/.test(url.pathname)) return null;
+  return { parent: match[1].trim(), reply: match[2].trim(), url: match[3] };
+}
