@@ -366,15 +366,7 @@ html.cw-styled .XganBc {
 }
 html.cw-styled
   :is(.XganBc, .cw-chat-surface)
-  :is(
-    .MiAAOe,
-    .Ny8m3,
-    .P2iMtd,
-    .W4T3sf,
-    .tB5Jxf-xl07Ob-XxIAqe,
-    .M8hvad,
-    .qRHR0e
-  ) {
+  :is(.MiAAOe, .Ny8m3, .W4T3sf, .tB5Jxf-xl07Ob-XxIAqe, .M8hvad, .qRHR0e) {
   background: transparent !important;
   border-radius: 4px !important;
   box-shadow: none !important;
@@ -1045,4 +1037,41 @@ html.cw-styled .NhKrqd .MsqITd {
 }
 html.cw-styled .NhKrqd[data-user-mention-type="3"] :is(span, svg) {
   color: var(--cw-selected-text) !important;
+}
+
+/* Suggestions share a composer wrapper but must retain their own opaque surface. */
+html.cw-styled .cw-composer .P2iMtd:has([role="listbox"]) {
+  background: var(--cw-bg) !important;
+  color: var(--cw-text) !important;
+  border: 1px solid var(--cw-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 28px #00000030 !important;
+  overflow: hidden;
+  z-index: 50;
+}
+html.cw-styled .cw-composer .P2iMtd [role="listbox"] {
+  background: var(--cw-bg) !important;
+  color: var(--cw-text) !important;
+  overscroll-behavior: contain;
+}
+html.cw-styled .cw-composer .P2iMtd [role="option"] {
+  color: var(--cw-text) !important;
+  border-radius: 5px;
+}
+html.cw-styled
+  .cw-composer
+  .P2iMtd
+  [role="option"]:is(:hover, [aria-selected="true"]) {
+  background: var(--cw-hover) !important;
+}
+html.cw-styled .cw-composer .P2iMtd .b3dq9 {
+  color: var(--cw-text) !important;
+}
+html.cw-styled .cw-composer .P2iMtd .OUav0d {
+  color: var(--cw-muted) !important;
+}
+html.cw-styled .cw-composer .P2iMtd .ZnvTxe {
+  background: var(--cw-bg) !important;
+  color: var(--cw-text) !important;
+  border-top: 1px solid var(--cw-border);
 }
