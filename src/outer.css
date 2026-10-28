@@ -482,6 +482,7 @@ html.cw-styled .cw-topbar .tryNwe {
 }
 html.cw-styled .cw-topbar [role="search"] .XnLB8 {
   height: 28px !important;
+  border-radius: 0 !important;
   padding-left: 8px !important;
   border-left: 1px solid #ffffff30 !important;
   display: flex !important;
