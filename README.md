@@ -1,19 +1,25 @@
 # Glack
 
-Local Chrome extension for Google Chat. Installed unpacked in Enrique's Chrome profile as `noilnpoahclgelmmlojbaeanmafkcgnf`.
+Glack brings familiar Slack workflows to Google Chat, making it easier to drop a separate Slack subscription.
+If your team already uses Google Workspace, the goal is simple: spend less on chat without giving up everyday conveniences.
+This local Chrome extension adds:
 
-## Use
+- Thread broadcasting: post a thread reply to the main Space with a link back to its context.
+- A Later queue: save messages, search them, mark them done, and return to reply.
+- Message reminders: choose 20 minutes, one hour, tomorrow at 09:00, or a custom local time.
+- Conversation collections: organize local shortcuts with drag and drop, ordering, and collapsible groups.
+- Quick switching: use Cmd/Ctrl+K to find discovered DMs, group chats, and Spaces with fuzzy search.
+- Themes and compact messages: choose eight palettes with independent Light, Dark, or System mode.
+- Keyword radar: highlight phrases in loaded messages, with optional Chrome alerts for new matches.
+- A code and log viewer: read messages with lexical highlighting, line numbers, copying, and line wrapping.
+- Media controls: show images and previews by default, or collapse detected media when you want less clutter.
 
-- Open Google Chat or its installed desktop app. Click **Later** in the sidebar or the floating lower-left button.
-- Hover or keyboard-focus a message: **Save** bookmarks it; **Remind** offers 20 minutes, one hour, tomorrow at 09:00, or a custom local time.
-- Later supports search, Done/Undo, context links and a Reply navigation action. For a message whose native reply control is unavailable, it opens the message and asks you to use Chat's Reply in thread action.
-- Collections are local conversation shortcuts with drag-and-drop movement, a keyboard-accessible Move menu, ordering and persisted collapse state. Google's native sidebar sections remain available and are the recommended place for primary conversation organization.
-- In a Space thread, select **Also post to Space** before sending a plain-text reply. It sends the reply first, waits for DOM confirmation, and then sends a separate linked root post. Do not use it for attachments, rich text or mention chips.
-- The ••• tab explains behavior and provides JSON backup export/import. Imports merge into the currently detected account.
+Glack works on standalone [Google Chat](https://chat.google.com) and its Chrome-installed desktop app. It does not support Gmail-embedded Chat or mobile clients.
+It keeps data in your Chrome profile, separated by your detected Google email. Data does not sync to other profiles or mobile.
 
-## Installation and updates
+## Get started
 
-The installed folder is `dist/`. Do not move or delete this folder while using the extension.
+Build the extension locally:
 
 ```sh
 npm ci
@@ -22,30 +28,64 @@ npm run build
 npm test
 ```
 
-After rebuilding, open chrome://extensions, click Reload on Glack, then reload Google Chat tabs and its desktop app. No Google OAuth setup is required. To remove, use Chrome's Remove button; export a backup first if you want to keep saved items.
+1. Open `chrome://extensions`.
+2. Enable Developer mode.
+3. Click Load unpacked.
+4. Select the `dist/` folder.
+5. Reload Google Chat.
 
-## Scope and limitations
+Keep `dist/` in place while using Glack. Glack needs no Google OAuth setup.
+After rebuilding, click Reload on Glack in `chrome://extensions`. Then reload your Google Chat tabs and desktop app.
 
-- Standalone chat.google.com and its Chrome-installed desktop app. Gmail-embedded Chat and mobile clients are not supported in this build.
-- Reminder notifications are local Chrome notifications, not Google bot DMs. They cannot wake a computer or run while Chrome is closed; overdue alarms reconcile on startup/resume.
-- Local data persists in this Chrome profile, separated by detected Google email. It does not sync to mobile or other profiles.
-- Broadcasts are two separate messages, not atomic server-side publication. Existing root drafts block sending. Navigation or uncertain delivery stops the operation. Check Chat before retrying.
-- Exact delivery confirmation relies on Google's private DOM metadata, not an official API receipt. Google UI changes can require adapter updates.
-- Native section unread aggregation and a separate inline reply composer are not implemented. Reply uses the native Chat workflow.
-- No private APIs, network interception, CSP removal, analytics, or external storage.
+## Use Glack
 
-## Validation
+Open Later in the sidebar or through the floating button at the lower left.
+Hover over a message, or focus it with the keyboard, to reveal Save and Remind.
+Later includes search, Done/Undo, context links, and a Reply action that opens the native Chat workflow.
+When the native reply control is unavailable, Glack opens the message and asks you to use Reply in thread.
 
-See docs/validation.md and docs/chat-plus-review.md. Live broadcasting was verified in the private, owner-only Space [Workbench Lab — Cedar 4827](https://chat.google.com/room/AAQAhLYm8MM). Both send-button and Enter-key paths work, and an occupied Space draft blocks sending while preserving both drafts. All outgoing test messages were confined to this Space.
+Open Glack themes in the sidebar, or press Alt+Shift+T, to change appearance.
+The Google Chat gear controls native settings such as notifications. Use Glack themes for Glack colors and display modes.
+Choose Aubergine, Paper, Midnight, Ocean, Forest, Rose, Lavender, or Sunset. Google original restores Google's appearance.
+Compact spacing is a separate setting. System mode follows your device automatically.
+Theme and mode selections save before Chat refreshes.
 
-## 0.2 — Appearance & productivity
+In a Space thread, select Also post to Space before sending a plain-text reply.
+Glack sends the reply first, waits for confirmation in the page, then sends a separate linked post to the Space.
+Do not use broadcasting for attachments, rich text, or mention chips.
 
-Open **Appearance** in Chat's sidebar (or **Alt+Shift+T**).
+Collections support a keyboard-accessible Move menu and remember their collapsed state.
+Google's native sidebar sections remain the recommended place to organize your main conversations.
+Recent visits in the switcher persist per account.
 
-- **Cmd/Ctrl+K**: fuzzy switcher for discovered DMs, group chats and Spaces; recent visits persist per account.
-- **Themes**: Aubergine, Paper, Midnight, Ocean, Google original. Compact spacing is independently configurable.
-- **Keyword radar**: enter comma-separated phrases and optionally enable Chrome alerts. Matches only loaded messages while Chat is open; old history does not generate alerts.
-- **Code / logs**: enhanced messages offer a viewer with lexical highlighting, line numbers, copy and wrapping. Full language parsing is not included.
-- **Alt+Shift+M**: collapse detected media, with a Show media button on each affected message.
+Enter comma-separated phrases in Keyword radar to highlight matches. Enable Chrome alerts if you want notifications.
+Use Code / logs on supported messages to open the viewer. It provides lexical highlighting without full language parsing.
+Press Alt+Shift+M to toggle media collapsing. Each affected message gets a Show media button.
+Detection excludes small images and emoji, but can miss preview cards.
 
-Themes preserve Google's underlying interaction model. Google DOM changes may require selector updates. Media detection deliberately excludes small images/emoji and may not identify every preview card. No extra Chrome permissions, remote services or external scripts are used.
+The ••• tab explains behavior and provides JSON backup export/import. Imports merge into the detected account.
+Export a backup before removing Glack if you want to keep saved items. Use Chrome's Remove button to uninstall it.
+
+## Limits and privacy
+
+- Reminders use local Chrome notifications rather than Google bot DMs. Chrome must be running; reminders cannot wake your computer.
+- Glack checks overdue reminders when Chrome starts or resumes.
+- Broadcasting creates two separate messages. It does not publish them as one atomic server operation.
+- An existing draft in the main Space blocks broadcasting. Navigation or uncertain delivery stops it. Check Chat before retrying.
+- Delivery checks rely on Google's private page metadata rather than official API receipts. Google UI changes can require adapter or selector updates.
+- Glack preserves Google's interactions. It does not implement aggregate unread counts for sections or a separate inline reply composer.
+- Glack uses no private APIs, network interception, CSP removal, analytics, or external storage.
+- Appearance and productivity features add no Chrome permissions, remote services, or external scripts.
+
+<details>
+<summary>Validation and project history</summary>
+
+See [validation notes](docs/validation.md) and the [Chat Plus review](docs/chat-plus-review.md).
+Live broadcast tests used the private, owner-only Space [Workbench Lab &#8212; Cedar 4827](https://chat.google.com/room/AAQAhLYm8MM).
+Both the Send button and Enter key worked. An occupied Space draft blocked sending while preserving both drafts.
+All outgoing test messages stayed in that Space.
+
+Version 0.2 introduced the appearance and productivity tools.
+The original unpacked installation in Enrique's Chrome profile used ID `noilnpoahclgelmmlojbaeanmafkcgnf`.
+
+</details>
