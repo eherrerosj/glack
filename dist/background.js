@@ -3,9 +3,18 @@
   // src/preferences.ts
   function preferences(raw = {}) {
     return {
-      theme: ["aubergine", "light", "dark", "ocean", "native"].includes(
-        raw?.theme
-      ) ? raw.theme : "aubergine",
+      theme: [
+        "aubergine",
+        "light",
+        "dark",
+        "ocean",
+        "forest",
+        "rose",
+        "lavender",
+        "sunset",
+        "native"
+      ].includes(raw?.theme) ? raw.theme : "aubergine",
+      mode: ["light", "dark", "system"].includes(raw?.mode) ? raw.mode : raw?.theme === "dark" ? "dark" : "light",
       compact: typeof raw?.compact === "boolean" ? raw.compact : true,
       collapseMedia: raw?.collapseMedia === true,
       code: raw?.code !== false,

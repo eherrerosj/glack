@@ -1,5 +1,15 @@
 export interface Preferences {
-  theme: "aubergine" | "light" | "dark" | "ocean" | "native";
+  theme:
+    | "aubergine"
+    | "light"
+    | "dark"
+    | "ocean"
+    | "forest"
+    | "rose"
+    | "lavender"
+    | "sunset"
+    | "native";
+  mode: "light" | "dark" | "system";
   compact: boolean;
   collapseMedia: boolean;
   code: boolean;
@@ -8,11 +18,24 @@ export interface Preferences {
 }
 export function preferences(raw: any = {}): Preferences {
   return {
-    theme: ["aubergine", "light", "dark", "ocean", "native"].includes(
-      raw?.theme,
-    )
+    theme: [
+      "aubergine",
+      "light",
+      "dark",
+      "ocean",
+      "forest",
+      "rose",
+      "lavender",
+      "sunset",
+      "native",
+    ].includes(raw?.theme)
       ? raw.theme
       : "aubergine",
+    mode: ["light", "dark", "system"].includes(raw?.mode)
+      ? raw.mode
+      : raw?.theme === "dark"
+        ? "dark"
+        : "light",
     compact: typeof raw?.compact === "boolean" ? raw.compact : true,
     collapseMedia: raw?.collapseMedia === true,
     code: raw?.code !== false,
@@ -48,3 +71,17 @@ export function fuzzyScore(name: string, query: string) {
   }
   return Math.max(1, score - n.length);
 }
+
+export function resolvedMode(mode: Preferences["mode"], systemDark: boolean) {
+  return mode === "system" ? (systemDark ? "dark" : "light") : mode;
+}
+export const palettes: Record<string, [string, string, string]> = {
+  aubergine: ["#350d36", "#4a154b", "#a567b0"],
+  light: ["#343640", "#eae5ef", "#81708f"],
+  dark: ["#121016", "#242229", "#a99bbd"],
+  ocean: ["#062f40", "#114b5f", "#2c9ab6"],
+  forest: ["#153c32", "#245847", "#3b9876"],
+  rose: ["#542b3a", "#763f53", "#c66989"],
+  lavender: ["#352d58", "#514673", "#9881d2"],
+  sunset: ["#543222", "#754931", "#c77b49"],
+};

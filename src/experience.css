@@ -320,3 +320,66 @@ select {
 input {
   accent-color: var(--accent);
 }
+:host([data-mode="light"]) {
+  --paper: #fff;
+  --ink: #1d1c1d;
+  --muted: #616061;
+  --border: #ddd;
+  --accent: #665276;
+  color-scheme: light;
+}
+:host([data-mode="dark"]) {
+  --paper: #1a1d21;
+  --ink: #e1e2e3;
+  --muted: #b2b5ba;
+  --border: #414348;
+  --accent: #b6a0d5;
+  color-scheme: dark;
+}
+.modes {
+  display: flex;
+  gap: 8px;
+}
+.modes button {
+  flex: 1;
+}
+.modes [aria-pressed="true"] {
+  outline: 2px solid var(--accent);
+  font-weight: 650;
+}
+.themes [data-swatch="forest"]:before {
+  background: linear-gradient(
+    90deg,
+    #153c32 25%,
+    #245847 25%,
+    #245847 60%,
+    #fff 60%
+  );
+}
+.themes [data-swatch="rose"]:before {
+  background: linear-gradient(
+    90deg,
+    #542b3a 25%,
+    #763f53 25%,
+    #763f53 60%,
+    #fff 60%
+  );
+}
+.themes [data-swatch="lavender"]:before {
+  background: linear-gradient(
+    90deg,
+    #352d58 25%,
+    #514673 25%,
+    #514673 60%,
+    #fff 60%
+  );
+}
+.themes [data-swatch="sunset"]:before {
+  background: linear-gradient(
+    90deg,
+    #543222 25%,
+    #754931 25%,
+    #754931 60%,
+    #fff 60%
+  );
+}

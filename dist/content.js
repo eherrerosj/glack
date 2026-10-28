@@ -73,9 +73,18 @@ View thread: ${url}`;
   // src/preferences.ts
   function preferences(raw = {}) {
     return {
-      theme: ["aubergine", "light", "dark", "ocean", "native"].includes(
-        raw?.theme
-      ) ? raw.theme : "aubergine",
+      theme: [
+        "aubergine",
+        "light",
+        "dark",
+        "ocean",
+        "forest",
+        "rose",
+        "lavender",
+        "sunset",
+        "native"
+      ].includes(raw?.theme) ? raw.theme : "aubergine",
+      mode: ["light", "dark", "system"].includes(raw?.mode) ? raw.mode : raw?.theme === "dark" ? "dark" : "light",
       compact: typeof raw?.compact === "boolean" ? raw.compact : true,
       collapseMedia: raw?.collapseMedia === true,
       code: raw?.code !== false,
@@ -104,6 +113,19 @@ View thread: ${url}`;
     }
     return Math.max(1, score - n.length);
   }
+  function resolvedMode(mode, systemDark) {
+    return mode === "system" ? systemDark ? "dark" : "light" : mode;
+  }
+  var palettes = {
+    aubergine: ["#350d36", "#4a154b", "#a567b0"],
+    light: ["#343640", "#eae5ef", "#81708f"],
+    dark: ["#121016", "#242229", "#a99bbd"],
+    ocean: ["#062f40", "#114b5f", "#2c9ab6"],
+    forest: ["#153c32", "#245847", "#3b9876"],
+    rose: ["#542b3a", "#763f53", "#c66989"],
+    lavender: ["#352d58", "#514673", "#9881d2"],
+    sunset: ["#543222", "#754931", "#c77b49"]
+  };
 
   // src/adapter.ts
   var rows = "[data-message-multiplat-item-id][data-id]";
@@ -216,7 +238,7 @@ View thread: ${url}`;
   }
 
   // src/experience.css
-  var experience_default = ':host {\n  --ink: #1d1c1d;\n  --paper: #fff;\n  --muted: #616061;\n  --border: #ddd;\n  --accent: #611f69;\n  font:\n    15px/1.45 -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    sans-serif;\n  color: var(--ink);\n}\n:host([data-theme="dark"]) {\n  --paper: #1a1d21;\n  --ink: #d1d2d3;\n  --muted: #a1a1a4;\n  --border: #414348;\n  --accent: #c69bd2;\n}\n* {\n  box-sizing: border-box;\n}\nbutton,\ninput,\nselect {\n  font: inherit;\n}\nbutton {\n  cursor: pointer;\n  background: var(--paper);\n  color: var(--ink);\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  padding: 8px 12px;\n}\nbutton:hover {\n  background: color-mix(in srgb, var(--accent) 10%, var(--paper));\n}\nbutton:focus-visible,\ninput:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #1264a3;\n  outline-offset: 2px;\n}\n.veil {\n  position: fixed;\n  inset: 0;\n  background: #0007;\n  backdrop-filter: none;\n  z-index: 2147483646;\n  display: flex;\n  justify-content: center;\n  align-items: flex-start;\n  padding: 12vh 24px 24px;\n}\n.dialog {\n  width: 600px;\n  max-height: 80vh;\n  overflow: auto;\n  background: var(--paper);\n  border-radius: 12px;\n  border: 1px solid var(--border);\n  box-shadow: 0 18px 80px #0005;\n  padding: 24px;\n}\n.wide {\n  width: min(1000px, 94vw);\n}\nheader {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 18px;\n}\nheader button {\n  border: 0;\n  font-size: 24px;\n  padding: 0 8px;\n}\nh2 {\n  font-size: 22px;\n  letter-spacing: -0.5px;\n  margin: 0;\n}\nh3 {\n  font-size: 15px;\n  margin: 24px 0 6px;\n}\n.muted,\n.hint {\n  color: var(--muted);\n  font-size: 13px;\n}\n.hint {\n  font-size: 12px;\n}\n.text-input {\n  display: block;\n  width: 100%;\n  padding: 12px;\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  background: var(--paper);\n  color: var(--ink);\n  margin: 8px 0 14px;\n}\n.themes {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 10px;\n  margin: 22px 0;\n}\n.themes button:before {\n  content: "";\n  display: block;\n  height: 35px;\n  border-radius: 4px;\n  margin-bottom: 8px;\n  background: linear-gradient(\n    90deg,\n    #350d36 22%,\n    #4a154b 22%,\n    #4a154b 55%,\n    #fff 55%\n  );\n  border: 1px solid #8885;\n}\n.themes [data-swatch="dark"]:before {\n  background: linear-gradient(\n    90deg,\n    #121016 22%,\n    #19171d 22%,\n    #19171d 55%,\n    #1a1d21 55%\n  );\n}\n.themes [data-swatch="light"]:before {\n  background: linear-gradient(\n    90deg,\n    #3f0e40 22%,\n    #f3eef4 22%,\n    #f3eef4 55%,\n    #fff 55%\n  );\n}\n.themes [data-swatch="ocean"]:before {\n  background: linear-gradient(\n    90deg,\n    #062f40 22%,\n    #114b5f 22%,\n    #114b5f 55%,\n    #fff 55%\n  );\n}\n.themes [data-swatch="native"]:before {\n  background: linear-gradient(90deg, #e8f0fe 55%, #fff 55%);\n}\n.themes [aria-pressed="true"] {\n  outline: 2px solid var(--accent);\n  font-weight: 700;\n}\n.toggle {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  margin: 14px 0;\n}\n.toggle input {\n  accent-color: var(--accent);\n  width: 17px;\n  height: 17px;\n}\n.results button {\n  display: block;\n  width: 100%;\n  border: 0;\n  text-align: left;\n  padding: 12px;\n}\n.results [aria-selected="true"] {\n  background: #1264a3;\n  color: #fff;\n}\n.code-actions {\n  display: flex;\n  gap: 8px;\n}\n.code-view {\n  overflow: auto;\n  max-height: 55vh;\n  background: #161b22;\n  color: #e6edf3;\n  padding: 16px 0;\n  border-radius: 7px;\n  font:\n    13px/1.65 ui-monospace,\n    SFMono-Regular,\n    Menlo,\n    monospace;\n}\n.code-line {\n  display: flex;\n  min-width: max-content;\n}\n.line-number {\n  color: #7d8590;\n  user-select: none;\n  min-width: 55px;\n  text-align: right;\n  padding-right: 18px;\n  flex-shrink: 0;\n}\n.code-line > span:last-child {\n  padding-right: 16px;\n}\n.wrap .code-line {\n  min-width: 0;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n}\n.keyword {\n  color: #ff7b72;\n}\n.string {\n  color: #a5d6ff;\n}\n.number {\n  color: #79c0ff;\n}\n.comment {\n  color: #8b949e;\n}\n/* Keep all controls reachable in short windows and avoid clipped dialog footers. */\n.veil {\n  padding: clamp(20px, 7vh, 64px) 20px;\n  align-items: center;\n}\n.dialog {\n  max-height: calc(100dvh - 40px);\n  padding: 24px;\n  scrollbar-gutter: stable;\n}\n.dialog > header {\n  padding-bottom: 12px;\n  border-bottom: 1px solid var(--border);\n  margin-bottom: 16px;\n}\n.dialog > header button {\n  width: 32px;\n  height: 32px;\n  border-radius: 6px;\n  line-height: 1;\n}\n.themes {\n  grid-template-columns: repeat(5, minmax(0, 1fr));\n  gap: 8px;\n  margin: 16px 0 22px;\n}\n.themes button {\n  font-size: 12px;\n  padding: 8px 6px;\n  min-height: 76px;\n}\n.themes button:before {\n  height: 28px;\n}\n.toggle {\n  font-size: 14px;\n  line-height: 1.5;\n  margin: 12px 0;\n}\n.toggle input {\n  flex-shrink: 0;\n}\n.results {\n  max-height: 45vh;\n  overflow: auto;\n  margin: 0 -8px;\n}\n.results button {\n  border-radius: 5px;\n}\nfooter.hint {\n  border-top: 1px solid var(--border);\n  padding-top: 12px;\n  margin-top: 12px;\n}\nselect {\n  background: var(--paper);\n  color: var(--ink);\n  border: 1px solid var(--border);\n  border-radius: 5px;\n  padding: 6px 10px;\n}\n@media (max-width: 560px) {\n  .themes {\n    grid-template-columns: repeat(3, minmax(0, 1fr));\n  }\n  .dialog {\n    padding: 18px;\n  }\n  .code-actions {\n    flex-wrap: wrap;\n  }\n}\n\n:host([data-theme="ocean"]) {\n  --accent: #087e99;\n  --paper: #f7fcfd;\n  --ink: #133b49;\n  --border: #c7dfe5;\n}\n:host([data-theme="light"]) {\n  --accent: #62566d;\n  --paper: #fffefa;\n  --ink: #343640;\n  --border: #ddd8ce;\n}\ninput {\n  accent-color: var(--accent);\n}\n';
+  var experience_default = ':host {\n  --ink: #1d1c1d;\n  --paper: #fff;\n  --muted: #616061;\n  --border: #ddd;\n  --accent: #611f69;\n  font:\n    15px/1.45 -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    sans-serif;\n  color: var(--ink);\n}\n:host([data-theme="dark"]) {\n  --paper: #1a1d21;\n  --ink: #d1d2d3;\n  --muted: #a1a1a4;\n  --border: #414348;\n  --accent: #c69bd2;\n}\n* {\n  box-sizing: border-box;\n}\nbutton,\ninput,\nselect {\n  font: inherit;\n}\nbutton {\n  cursor: pointer;\n  background: var(--paper);\n  color: var(--ink);\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  padding: 8px 12px;\n}\nbutton:hover {\n  background: color-mix(in srgb, var(--accent) 10%, var(--paper));\n}\nbutton:focus-visible,\ninput:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #1264a3;\n  outline-offset: 2px;\n}\n.veil {\n  position: fixed;\n  inset: 0;\n  background: #0007;\n  backdrop-filter: none;\n  z-index: 2147483646;\n  display: flex;\n  justify-content: center;\n  align-items: flex-start;\n  padding: 12vh 24px 24px;\n}\n.dialog {\n  width: 600px;\n  max-height: 80vh;\n  overflow: auto;\n  background: var(--paper);\n  border-radius: 12px;\n  border: 1px solid var(--border);\n  box-shadow: 0 18px 80px #0005;\n  padding: 24px;\n}\n.wide {\n  width: min(1000px, 94vw);\n}\nheader {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 18px;\n}\nheader button {\n  border: 0;\n  font-size: 24px;\n  padding: 0 8px;\n}\nh2 {\n  font-size: 22px;\n  letter-spacing: -0.5px;\n  margin: 0;\n}\nh3 {\n  font-size: 15px;\n  margin: 24px 0 6px;\n}\n.muted,\n.hint {\n  color: var(--muted);\n  font-size: 13px;\n}\n.hint {\n  font-size: 12px;\n}\n.text-input {\n  display: block;\n  width: 100%;\n  padding: 12px;\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  background: var(--paper);\n  color: var(--ink);\n  margin: 8px 0 14px;\n}\n.themes {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 10px;\n  margin: 22px 0;\n}\n.themes button:before {\n  content: "";\n  display: block;\n  height: 35px;\n  border-radius: 4px;\n  margin-bottom: 8px;\n  background: linear-gradient(\n    90deg,\n    #350d36 22%,\n    #4a154b 22%,\n    #4a154b 55%,\n    #fff 55%\n  );\n  border: 1px solid #8885;\n}\n.themes [data-swatch="dark"]:before {\n  background: linear-gradient(\n    90deg,\n    #121016 22%,\n    #19171d 22%,\n    #19171d 55%,\n    #1a1d21 55%\n  );\n}\n.themes [data-swatch="light"]:before {\n  background: linear-gradient(\n    90deg,\n    #3f0e40 22%,\n    #f3eef4 22%,\n    #f3eef4 55%,\n    #fff 55%\n  );\n}\n.themes [data-swatch="ocean"]:before {\n  background: linear-gradient(\n    90deg,\n    #062f40 22%,\n    #114b5f 22%,\n    #114b5f 55%,\n    #fff 55%\n  );\n}\n.themes [data-swatch="native"]:before {\n  background: linear-gradient(90deg, #e8f0fe 55%, #fff 55%);\n}\n.themes [aria-pressed="true"] {\n  outline: 2px solid var(--accent);\n  font-weight: 700;\n}\n.toggle {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  margin: 14px 0;\n}\n.toggle input {\n  accent-color: var(--accent);\n  width: 17px;\n  height: 17px;\n}\n.results button {\n  display: block;\n  width: 100%;\n  border: 0;\n  text-align: left;\n  padding: 12px;\n}\n.results [aria-selected="true"] {\n  background: #1264a3;\n  color: #fff;\n}\n.code-actions {\n  display: flex;\n  gap: 8px;\n}\n.code-view {\n  overflow: auto;\n  max-height: 55vh;\n  background: #161b22;\n  color: #e6edf3;\n  padding: 16px 0;\n  border-radius: 7px;\n  font:\n    13px/1.65 ui-monospace,\n    SFMono-Regular,\n    Menlo,\n    monospace;\n}\n.code-line {\n  display: flex;\n  min-width: max-content;\n}\n.line-number {\n  color: #7d8590;\n  user-select: none;\n  min-width: 55px;\n  text-align: right;\n  padding-right: 18px;\n  flex-shrink: 0;\n}\n.code-line > span:last-child {\n  padding-right: 16px;\n}\n.wrap .code-line {\n  min-width: 0;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n}\n.keyword {\n  color: #ff7b72;\n}\n.string {\n  color: #a5d6ff;\n}\n.number {\n  color: #79c0ff;\n}\n.comment {\n  color: #8b949e;\n}\n/* Keep all controls reachable in short windows and avoid clipped dialog footers. */\n.veil {\n  padding: clamp(20px, 7vh, 64px) 20px;\n  align-items: center;\n}\n.dialog {\n  max-height: calc(100dvh - 40px);\n  padding: 24px;\n  scrollbar-gutter: stable;\n}\n.dialog > header {\n  padding-bottom: 12px;\n  border-bottom: 1px solid var(--border);\n  margin-bottom: 16px;\n}\n.dialog > header button {\n  width: 32px;\n  height: 32px;\n  border-radius: 6px;\n  line-height: 1;\n}\n.themes {\n  grid-template-columns: repeat(5, minmax(0, 1fr));\n  gap: 8px;\n  margin: 16px 0 22px;\n}\n.themes button {\n  font-size: 12px;\n  padding: 8px 6px;\n  min-height: 76px;\n}\n.themes button:before {\n  height: 28px;\n}\n.toggle {\n  font-size: 14px;\n  line-height: 1.5;\n  margin: 12px 0;\n}\n.toggle input {\n  flex-shrink: 0;\n}\n.results {\n  max-height: 45vh;\n  overflow: auto;\n  margin: 0 -8px;\n}\n.results button {\n  border-radius: 5px;\n}\nfooter.hint {\n  border-top: 1px solid var(--border);\n  padding-top: 12px;\n  margin-top: 12px;\n}\nselect {\n  background: var(--paper);\n  color: var(--ink);\n  border: 1px solid var(--border);\n  border-radius: 5px;\n  padding: 6px 10px;\n}\n@media (max-width: 560px) {\n  .themes {\n    grid-template-columns: repeat(3, minmax(0, 1fr));\n  }\n  .dialog {\n    padding: 18px;\n  }\n  .code-actions {\n    flex-wrap: wrap;\n  }\n}\n\n:host([data-theme="ocean"]) {\n  --accent: #087e99;\n  --paper: #f7fcfd;\n  --ink: #133b49;\n  --border: #c7dfe5;\n}\n:host([data-theme="light"]) {\n  --accent: #62566d;\n  --paper: #fffefa;\n  --ink: #343640;\n  --border: #ddd8ce;\n}\ninput {\n  accent-color: var(--accent);\n}\n:host([data-mode="light"]) {\n  --paper: #fff;\n  --ink: #1d1c1d;\n  --muted: #616061;\n  --border: #ddd;\n  --accent: #665276;\n  color-scheme: light;\n}\n:host([data-mode="dark"]) {\n  --paper: #1a1d21;\n  --ink: #e1e2e3;\n  --muted: #b2b5ba;\n  --border: #414348;\n  --accent: #b6a0d5;\n  color-scheme: dark;\n}\n.modes {\n  display: flex;\n  gap: 8px;\n}\n.modes button {\n  flex: 1;\n}\n.modes [aria-pressed="true"] {\n  outline: 2px solid var(--accent);\n  font-weight: 650;\n}\n.themes [data-swatch="forest"]:before {\n  background: linear-gradient(\n    90deg,\n    #153c32 25%,\n    #245847 25%,\n    #245847 60%,\n    #fff 60%\n  );\n}\n.themes [data-swatch="rose"]:before {\n  background: linear-gradient(\n    90deg,\n    #542b3a 25%,\n    #763f53 25%,\n    #763f53 60%,\n    #fff 60%\n  );\n}\n.themes [data-swatch="lavender"]:before {\n  background: linear-gradient(\n    90deg,\n    #352d58 25%,\n    #514673 25%,\n    #514673 60%,\n    #fff 60%\n  );\n}\n.themes [data-swatch="sunset"]:before {\n  background: linear-gradient(\n    90deg,\n    #543222 25%,\n    #754931 25%,\n    #754931 60%,\n    #fff 60%\n  );\n}\n';
 
   // src/experience.ts
   function experience(identity, rpc, toast) {
@@ -307,6 +329,10 @@ View thread: ${url}`;
         toast(e instanceof Error ? e.message : "Could not save preferences");
       }
     }
+    const systemMode = window.matchMedia?.("(prefers-color-scheme: dark)");
+    systemMode?.addEventListener("change", () => {
+      if (p.mode === "system") apply();
+    });
     function apply() {
       const root = document.documentElement;
       if (root.dataset.cwTheme !== p.theme) root.dataset.cwTheme = p.theme;
@@ -314,9 +340,43 @@ View thread: ${url}`;
       root.classList.toggle("cw-compact", p.compact);
       root.classList.toggle("cw-hide-media", p.collapseMedia);
       root.classList.toggle("cw-code-enabled", p.code);
+      const mode = resolvedMode(p.mode, systemMode?.matches ?? false);
+      if (root.dataset.cwMode !== mode) root.dataset.cwMode = mode;
+      const palette = palettes[p.theme];
+      const colors = palette ? {
+        rail: palette[0],
+        side: palette[1],
+        "side-text": p.theme === "light" ? "#352636" : "#f7f4fa",
+        bg: mode === "dark" ? "#1a1d21" : "#ffffff",
+        text: mode === "dark" ? "#e1e2e3" : "#1d1c1d",
+        muted: mode === "dark" ? "#b2b5ba" : "#616061",
+        border: mode === "dark" ? "#383a3e" : "#dddddd",
+        hover: mode === "dark" ? "#26292e" : "#f6f6f7",
+        selected: palette[2],
+        link: mode === "dark" ? "#9ecbff" : "#1264a3"
+      } : {};
+      for (const key of [
+        "rail",
+        "side",
+        "side-text",
+        "bg",
+        "text",
+        "muted",
+        "border",
+        "hover",
+        "selected",
+        "link"
+      ]) {
+        if (colors[key]) root.style.setProperty(`--cw-${key}`, colors[key]);
+        else root.style.removeProperty(`--cw-${key}`);
+      }
       host.dataset.theme = p.theme;
+      host.dataset.mode = mode;
       const workbench = document.getElementById("cw-host");
-      if (workbench) workbench.dataset.theme = p.theme;
+      if (workbench) {
+        workbench.dataset.theme = p.theme;
+        workbench.dataset.mode = mode;
+      }
     }
     new MutationObserver(() => {
       if (appearanceReady) apply();
@@ -325,11 +385,11 @@ View thread: ${url}`;
       attributeFilter: ["class", "data-cw-theme"]
     });
     function settings() {
-      const box = dialog("Make Chat yours");
+      const box = dialog("Glack appearance");
       box.append(
         node(
           "p",
-          "Slack-inspired appearance, with your Google Chat conversations.",
+          "Glack controls the colors and layout here. The Google Chat gear controls native settings such as notifications.",
           "muted"
         )
       );
@@ -339,6 +399,10 @@ View thread: ${url}`;
         ["light", "Paper"],
         ["dark", "Midnight"],
         ["ocean", "Ocean"],
+        ["forest", "Forest"],
+        ["rose", "Rose"],
+        ["lavender", "Lavender"],
+        ["sunset", "Sunset"],
         ["native", "Google original"]
       ]) {
         const b = button(label2, () => {
@@ -348,7 +412,27 @@ View thread: ${url}`;
         b.setAttribute("aria-pressed", String(p.theme === value));
         themes.append(b);
       }
-      box.append(themes);
+      box.append(node("h3", "Color theme"), themes);
+      const modes = node("div", "", "modes");
+      modes.setAttribute("aria-label", "Appearance mode");
+      for (const mode of ["light", "dark", "system"]) {
+        const b = button(
+          mode[0].toUpperCase() + mode.slice(1),
+          () => void change({ mode }, true)
+        );
+        b.setAttribute("aria-pressed", String(p.mode === mode));
+        b.disabled = p.theme === "native";
+        modes.append(b);
+      }
+      box.append(
+        node("h3", "Mode"),
+        modes,
+        node(
+          "p",
+          p.theme === "native" ? "Google original uses Google Chat\u2019s own appearance settings." : "System follows your device automatically. Color and mode changes save, then refresh Chat.",
+          "muted"
+        )
+      );
       const toggle = (label2, key) => {
         const l = node("label", "", "toggle"), i = document.createElement("input");
         i.type = "checkbox";
@@ -422,6 +506,30 @@ View thread: ${url}`;
             visited = "";
           });
         }
+      }
+    }
+    function clarifySettings() {
+      const gear = document.querySelector('.cw-topbar [aria-label="Settings"]');
+      if (gear) {
+        gear.setAttribute("aria-label", "Google Chat settings");
+        gear.setAttribute(
+          "title",
+          "Google Chat settings \xB7 notifications and account options. Use Glack appearance for themes."
+        );
+      }
+      const nativeSettings = document.querySelector(
+        '[aria-label="Chat settings"]'
+      );
+      if (nativeSettings && !nativeSettings.querySelector(".cw-settings-help")) {
+        const help = node("div", "", "cw-settings-help");
+        help.append(
+          node(
+            "span",
+            "Using Glack? Change your colors and light/dark mode in Glack appearance."
+          ),
+          button("Open Glack appearance", settings)
+        );
+        nativeSettings.prepend(help);
       }
     }
     function switcher() {
@@ -575,6 +683,7 @@ View thread: ${url}`;
           button2.classList.add("cw-new-chat");
       }
       document.querySelector('[role="banner"]')?.classList.add("cw-topbar");
+      clarifySettings();
       for (const logo of document.querySelectorAll('[aria-label="Chat logo"]')) {
         if (logo.querySelector(".cw-brand")) continue;
         const brand = node("span", "", "cw-brand");
@@ -796,7 +905,7 @@ View thread: ${url}`;
   }
 
   // src/style.css
-  var style_default = ':host {\n  font-family:\n    Google Sans,\n    Inter,\n    -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    sans-serif;\n  color: #20352e;\n  font-size: 14px;\n  line-height: 1.5;\n  color-scheme: light dark;\n}\n* {\n  box-sizing: border-box;\n}\nbutton,\ninput,\nselect {\n  font: inherit;\n}\nbutton,\na,\ninput,\nselect {\n  -webkit-tap-highlight-color: transparent;\n}\nbutton {\n  cursor: pointer;\n}\nbutton:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #75b6a0;\n  outline-offset: 3px;\n}\nbutton {\n  transition:\n    background 0.15s,\n    transform 0.15s;\n}\nbutton:hover {\n  filter: brightness(0.96);\n}\n.cw-launcher {\n  position: fixed;\n  bottom: 24px;\n  left: 24px;\n  z-index: 2147483000;\n  border: 1px solid #d8e4dd;\n  border-radius: 30px;\n  background: #183f33;\n  color: #fff;\n  padding: 12px 20px;\n  box-shadow: 0 4px 18px #122d2925;\n  font-weight: 600;\n}\n.cw-launcher.cw-due {\n  background: #8b4e16;\n}\n.cw-panel {\n  position: fixed;\n  top: 20px;\n  right: 22px;\n  bottom: 20px;\n  width: 440px;\n  max-width: calc(100vw - 28px);\n  z-index: 2147483001;\n  background: #f7faf7;\n  border: 1px solid #dbe5dd;\n  border-radius: 24px;\n  box-shadow: 0 16px 65px #0c241f35;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  animation: cw-in 0.18s ease-out;\n}\n.cw-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  padding: 28px 26px 20px;\n  background: linear-gradient(120deg, #e7f2eb, #f7faf7);\n}\n.cw-eyebrow {\n  font-size: 10px;\n  letter-spacing: 2px;\n  font-weight: 750;\n  color: #577365;\n  margin-bottom: 8px;\n}\nh1 {\n  font-size: 24px;\n  font-weight: 550;\n  letter-spacing: -0.7px;\n  margin: 0;\n  line-height: 1.2;\n}\nh2 {\n  font-size: 18px;\n  font-weight: 550;\n  letter-spacing: -0.3px;\n  margin: 22px 0 8px;\n}\np {\n  margin: 10px 0;\n  line-height: 1.6;\n}\n.cw-close {\n  border: 0;\n  background: transparent;\n  color: inherit;\n  font-size: 27px;\n  line-height: 24px;\n  padding: 4px 8px;\n  border-radius: 8px;\n}\n.cw-tabs {\n  display: flex;\n  gap: 4px;\n  padding: 0 20px 15px;\n  border-bottom: 1px solid #e1e8e2;\n}\n.cw-tab {\n  border: 0;\n  padding: 8px 11px;\n  background: transparent;\n  color: #66756c;\n  border-radius: 10px;\n  font-size: 12px;\n  font-weight: 600;\n}\n.cw-tab.active {\n  background: #dfebe3;\n  color: #244c3b;\n}\n.cw-body {\n  padding: 20px 24px;\n  overflow: auto;\n  flex: 1;\n  overscroll-behavior: contain;\n}\n.cw-input {\n  width: 100%;\n  border: 1px solid #d9e2db;\n  border-radius: 12px;\n  background: #fff;\n  color: inherit;\n  padding: 12px 14px;\n  margin-bottom: 12px;\n  font-size: 13px;\n}\n.cw-card {\n  border: 1px solid #e0e7e1;\n  background: #fff;\n  padding: 18px;\n  border-radius: 16px;\n  margin: 12px 0;\n  box-shadow: 0 2px 3px #183f3303;\n}\n.cw-meta {\n  display: flex;\n  justify-content: space-between;\n  gap: 12px;\n  font-size: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.7px;\n  color: #738278;\n  margin-bottom: 10px;\n}\n.cw-meta span:first-child {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.cw-sender {\n  font-size: 13px;\n  font-weight: 650;\n}\n.cw-message {\n  font-size: 13px;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  max-height: 220px;\n  overflow: auto;\n  color: #44564b;\n}\n.cw-actions {\n  display: flex;\n  gap: 6px;\n  flex-wrap: wrap;\n  margin-top: 14px;\n}\n.cw-btn {\n  border: 1px solid #e0e7e1;\n  background: #f7faf7;\n  color: #375847;\n  border-radius: 8px;\n  padding: 7px 10px;\n  font-size: 11px;\n  font-weight: 600;\n}\n.cw-btn.primary {\n  background: #245b43;\n  color: #fff;\n  padding: 11px 15px;\n  border-color: #245b43;\n}\n.cw-time {\n  font-size: 11px;\n  color: #627c6b;\n  background: #eef4ef;\n  border-radius: 6px;\n  padding: 5px 8px;\n  display: inline-block;\n}\n.cw-time.overdue {\n  background: #fff0d9;\n  color: #8a5915;\n}\n.cw-muted {\n  color: #7b887f;\n  font-size: 12px;\n}\n.cw-center {\n  text-align: center;\n}\n.cw-empty-icon {\n  width: 58px;\n  height: 58px;\n  display: grid;\n  place-items: center;\n  border-radius: 50%;\n  background: #e7f0e9;\n  color: #668675;\n  font-size: 24px;\n  margin: 54px auto 18px;\n}\n.cw-toast {\n  position: fixed;\n  z-index: 2147483646;\n  bottom: 28px;\n  left: 50%;\n  transform: translateX(-50%);\n  max-width: 560px;\n  padding: 14px 20px;\n  border-radius: 12px;\n  background: #203f32;\n  color: white;\n  box-shadow: 0 8px 30px #0003;\n  font-size: 13px;\n  animation: cw-in 0.18s ease-out;\n}\n.cw-preset {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 14px;\n  border: 1px solid #d9e2db;\n  border-radius: 12px;\n  background: #fff;\n  color: inherit;\n  margin: 10px 0;\n}\n.cw-label {\n  display: block;\n  margin-top: 20px;\n  font-size: 12px;\n  color: #748377;\n}\n.cw-label input {\n  margin-top: 8px;\n}\n.cw-collection-row {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  padding: 10px 0;\n  border-bottom: 1px solid #edf1ed;\n}\n.cw-shortcut {\n  color: #2d654b;\n  flex: 1;\n  text-decoration: none;\n  font-size: 13px;\n}\n.cw-select {\n  max-width: 90px;\n  border: 1px solid #dce4dd;\n  border-radius: 6px;\n  padding: 4px;\n  color: inherit;\n  background: transparent;\n  font-size: 11px;\n}\n@keyframes cw-in {\n  from {\n    opacity: 0;\n    translate: 0 5px;\n  }\n  to {\n    opacity: 1;\n    translate: 0 0;\n  }\n}\n@media (prefers-color-scheme: dark) {\n  :host {\n    color: #dce8df;\n  }\n  .cw-panel {\n    background: #1b2420;\n    border-color: #3c4c41;\n  }\n  .cw-head {\n    background: linear-gradient(120deg, #273a2e, #1b2420);\n  }\n  .cw-eyebrow,\n  .cw-muted {\n    color: #9ab3a2;\n  }\n  .cw-tabs {\n    border-color: #35453a;\n  }\n  .cw-tab {\n    color: #a1b7a8;\n  }\n  .cw-tab.active {\n    background: #344d3d;\n    color: #d9ecdf;\n  }\n  .cw-card,\n  .cw-input,\n  .cw-preset {\n    background: #242f28;\n    border-color: #3c4c41;\n  }\n  .cw-btn {\n    background: #2d3c32;\n    color: #d0e5d7;\n    border-color: #455b4b;\n  }\n  .cw-message {\n    color: #c0d0c4;\n  }\n  .cw-close {\n    color: inherit;\n  }\n  .cw-meta {\n    color: #9bb4a4;\n  }\n  .cw-time {\n    background: #324938;\n    color: #b7d3bf;\n  }\n  .cw-time.overdue {\n    background: #4f3e25;\n    color: #e5c08b;\n  }\n  .cw-empty-icon {\n    background: #304735;\n    color: #a8c6b0;\n  }\n  .cw-shortcut {\n    color: #b0d5bd;\n  }\n  .cw-collection-row {\n    border-color: #3a4c3e;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  * {\n    animation: none !important;\n    transition: none !important;\n  }\n}\n\n:host([data-theme]:not([data-theme="native"])) {\n  --cw-panel-bg: #fff;\n  --cw-panel-text: #1d1c1d;\n  --cw-panel-muted: #616061;\n  --cw-panel-border: #ddd;\n  --cw-panel-hover: #f6f6f7;\n  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\n  color: var(--cw-panel-text);\n  color-scheme: light;\n}\n:host([data-theme="dark"][data-theme]) {\n  --cw-panel-bg: #1a1d21;\n  --cw-panel-text: #e1e2e3;\n  --cw-panel-muted: #aaadb2;\n  --cw-panel-border: #383a3e;\n  --cw-panel-hover: #222529;\n  color: var(--cw-panel-text);\n  color-scheme: dark;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-launcher {\n  display: none;\n}\n:host([data-theme]:not([data-theme="native"]))\n  :is(\n    .cw-panel,\n    .cw-head,\n    .cw-tabs,\n    .cw-card,\n    .cw-input,\n    .cw-select,\n    .cw-btn,\n    .cw-preset,\n    .cw-tab\n  ) {\n  background: var(--cw-panel-bg);\n  color: var(--cw-panel-text);\n  border-color: var(--cw-panel-border);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-panel {\n  border-radius: 10px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-head {\n  padding: 22px 22px 18px;\n}\n:host([data-theme]:not([data-theme="native"]))\n  :is(.cw-muted, .cw-meta, .cw-eyebrow) {\n  color: var(--cw-panel-muted);\n}\n:host([data-theme]:not([data-theme="native"])) :is(.cw-message, .cw-sender) {\n  color: var(--cw-panel-text);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-tab.active {\n  background: var(--cw-panel-hover);\n  color: var(--cw-panel-text);\n  box-shadow: inset 0 -2px #85548b;\n  border-radius: 5px 5px 0 0;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-card {\n  border-radius: 8px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-btn {\n  border-radius: 5px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-btn.primary {\n  background: #007a5a;\n  color: #fff;\n  border-color: #007a5a;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-tabs {\n  padding: 0 16px 10px;\n  gap: 2px;\n  flex-wrap: wrap;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-body {\n  padding: 18px 22px;\n}\n:host([data-theme]:not([data-theme="native"])) h1 {\n  font-size: 22px;\n  font-weight: 650;\n}\n:host([data-theme]:not([data-theme="native"])) :is(.cw-time, .cw-empty-icon) {\n  background: var(--cw-panel-hover);\n  color: var(--cw-panel-muted);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-time.overdue {\n  background: #d5a13420;\n  color: var(--cw-panel-text);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-toast {\n  background: #252329;\n  border: 1px solid #ffffff20;\n  border-radius: 7px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-shortcut {\n  color: var(--cw-panel-text);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-collection-row {\n  border-color: var(--cw-panel-border);\n}\n';
+  var style_default = ':host {\n  font-family:\n    Google Sans,\n    Inter,\n    -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    sans-serif;\n  color: #20352e;\n  font-size: 14px;\n  line-height: 1.5;\n  color-scheme: light dark;\n}\n* {\n  box-sizing: border-box;\n}\nbutton,\ninput,\nselect {\n  font: inherit;\n}\nbutton,\na,\ninput,\nselect {\n  -webkit-tap-highlight-color: transparent;\n}\nbutton {\n  cursor: pointer;\n}\nbutton:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #75b6a0;\n  outline-offset: 3px;\n}\nbutton {\n  transition:\n    background 0.15s,\n    transform 0.15s;\n}\nbutton:hover {\n  filter: brightness(0.96);\n}\n.cw-launcher {\n  position: fixed;\n  bottom: 24px;\n  left: 24px;\n  z-index: 2147483000;\n  border: 1px solid #d8e4dd;\n  border-radius: 30px;\n  background: #183f33;\n  color: #fff;\n  padding: 12px 20px;\n  box-shadow: 0 4px 18px #122d2925;\n  font-weight: 600;\n}\n.cw-launcher.cw-due {\n  background: #8b4e16;\n}\n.cw-panel {\n  position: fixed;\n  top: 20px;\n  right: 22px;\n  bottom: 20px;\n  width: 440px;\n  max-width: calc(100vw - 28px);\n  z-index: 2147483001;\n  background: #f7faf7;\n  border: 1px solid #dbe5dd;\n  border-radius: 24px;\n  box-shadow: 0 16px 65px #0c241f35;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  animation: cw-in 0.18s ease-out;\n}\n.cw-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  padding: 28px 26px 20px;\n  background: linear-gradient(120deg, #e7f2eb, #f7faf7);\n}\n.cw-eyebrow {\n  font-size: 10px;\n  letter-spacing: 2px;\n  font-weight: 750;\n  color: #577365;\n  margin-bottom: 8px;\n}\nh1 {\n  font-size: 24px;\n  font-weight: 550;\n  letter-spacing: -0.7px;\n  margin: 0;\n  line-height: 1.2;\n}\nh2 {\n  font-size: 18px;\n  font-weight: 550;\n  letter-spacing: -0.3px;\n  margin: 22px 0 8px;\n}\np {\n  margin: 10px 0;\n  line-height: 1.6;\n}\n.cw-close {\n  border: 0;\n  background: transparent;\n  color: inherit;\n  font-size: 27px;\n  line-height: 24px;\n  padding: 4px 8px;\n  border-radius: 8px;\n}\n.cw-tabs {\n  display: flex;\n  gap: 4px;\n  padding: 0 20px 15px;\n  border-bottom: 1px solid #e1e8e2;\n}\n.cw-tab {\n  border: 0;\n  padding: 8px 11px;\n  background: transparent;\n  color: #66756c;\n  border-radius: 10px;\n  font-size: 12px;\n  font-weight: 600;\n}\n.cw-tab.active {\n  background: #dfebe3;\n  color: #244c3b;\n}\n.cw-body {\n  padding: 20px 24px;\n  overflow: auto;\n  flex: 1;\n  overscroll-behavior: contain;\n}\n.cw-input {\n  width: 100%;\n  border: 1px solid #d9e2db;\n  border-radius: 12px;\n  background: #fff;\n  color: inherit;\n  padding: 12px 14px;\n  margin-bottom: 12px;\n  font-size: 13px;\n}\n.cw-card {\n  border: 1px solid #e0e7e1;\n  background: #fff;\n  padding: 18px;\n  border-radius: 16px;\n  margin: 12px 0;\n  box-shadow: 0 2px 3px #183f3303;\n}\n.cw-meta {\n  display: flex;\n  justify-content: space-between;\n  gap: 12px;\n  font-size: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.7px;\n  color: #738278;\n  margin-bottom: 10px;\n}\n.cw-meta span:first-child {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.cw-sender {\n  font-size: 13px;\n  font-weight: 650;\n}\n.cw-message {\n  font-size: 13px;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  max-height: 220px;\n  overflow: auto;\n  color: #44564b;\n}\n.cw-actions {\n  display: flex;\n  gap: 6px;\n  flex-wrap: wrap;\n  margin-top: 14px;\n}\n.cw-btn {\n  border: 1px solid #e0e7e1;\n  background: #f7faf7;\n  color: #375847;\n  border-radius: 8px;\n  padding: 7px 10px;\n  font-size: 11px;\n  font-weight: 600;\n}\n.cw-btn.primary {\n  background: #245b43;\n  color: #fff;\n  padding: 11px 15px;\n  border-color: #245b43;\n}\n.cw-time {\n  font-size: 11px;\n  color: #627c6b;\n  background: #eef4ef;\n  border-radius: 6px;\n  padding: 5px 8px;\n  display: inline-block;\n}\n.cw-time.overdue {\n  background: #fff0d9;\n  color: #8a5915;\n}\n.cw-muted {\n  color: #7b887f;\n  font-size: 12px;\n}\n.cw-center {\n  text-align: center;\n}\n.cw-empty-icon {\n  width: 58px;\n  height: 58px;\n  display: grid;\n  place-items: center;\n  border-radius: 50%;\n  background: #e7f0e9;\n  color: #668675;\n  font-size: 24px;\n  margin: 54px auto 18px;\n}\n.cw-toast {\n  position: fixed;\n  z-index: 2147483646;\n  bottom: 28px;\n  left: 50%;\n  transform: translateX(-50%);\n  max-width: 560px;\n  padding: 14px 20px;\n  border-radius: 12px;\n  background: #203f32;\n  color: white;\n  box-shadow: 0 8px 30px #0003;\n  font-size: 13px;\n  animation: cw-in 0.18s ease-out;\n}\n.cw-preset {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 14px;\n  border: 1px solid #d9e2db;\n  border-radius: 12px;\n  background: #fff;\n  color: inherit;\n  margin: 10px 0;\n}\n.cw-label {\n  display: block;\n  margin-top: 20px;\n  font-size: 12px;\n  color: #748377;\n}\n.cw-label input {\n  margin-top: 8px;\n}\n.cw-collection-row {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  padding: 10px 0;\n  border-bottom: 1px solid #edf1ed;\n}\n.cw-shortcut {\n  color: #2d654b;\n  flex: 1;\n  text-decoration: none;\n  font-size: 13px;\n}\n.cw-select {\n  max-width: 90px;\n  border: 1px solid #dce4dd;\n  border-radius: 6px;\n  padding: 4px;\n  color: inherit;\n  background: transparent;\n  font-size: 11px;\n}\n@keyframes cw-in {\n  from {\n    opacity: 0;\n    translate: 0 5px;\n  }\n  to {\n    opacity: 1;\n    translate: 0 0;\n  }\n}\n@media (prefers-color-scheme: dark) {\n  :host {\n    color: #dce8df;\n  }\n  .cw-panel {\n    background: #1b2420;\n    border-color: #3c4c41;\n  }\n  .cw-head {\n    background: linear-gradient(120deg, #273a2e, #1b2420);\n  }\n  .cw-eyebrow,\n  .cw-muted {\n    color: #9ab3a2;\n  }\n  .cw-tabs {\n    border-color: #35453a;\n  }\n  .cw-tab {\n    color: #a1b7a8;\n  }\n  .cw-tab.active {\n    background: #344d3d;\n    color: #d9ecdf;\n  }\n  .cw-card,\n  .cw-input,\n  .cw-preset {\n    background: #242f28;\n    border-color: #3c4c41;\n  }\n  .cw-btn {\n    background: #2d3c32;\n    color: #d0e5d7;\n    border-color: #455b4b;\n  }\n  .cw-message {\n    color: #c0d0c4;\n  }\n  .cw-close {\n    color: inherit;\n  }\n  .cw-meta {\n    color: #9bb4a4;\n  }\n  .cw-time {\n    background: #324938;\n    color: #b7d3bf;\n  }\n  .cw-time.overdue {\n    background: #4f3e25;\n    color: #e5c08b;\n  }\n  .cw-empty-icon {\n    background: #304735;\n    color: #a8c6b0;\n  }\n  .cw-shortcut {\n    color: #b0d5bd;\n  }\n  .cw-collection-row {\n    border-color: #3a4c3e;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  * {\n    animation: none !important;\n    transition: none !important;\n  }\n}\n\n:host([data-theme]:not([data-theme="native"])) {\n  --cw-panel-bg: #fff;\n  --cw-panel-text: #1d1c1d;\n  --cw-panel-muted: #616061;\n  --cw-panel-border: #ddd;\n  --cw-panel-hover: #f6f6f7;\n  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\n  color: var(--cw-panel-text);\n  color-scheme: light;\n}\n:host([data-theme="dark"][data-theme]) {\n  --cw-panel-bg: #1a1d21;\n  --cw-panel-text: #e1e2e3;\n  --cw-panel-muted: #aaadb2;\n  --cw-panel-border: #383a3e;\n  --cw-panel-hover: #222529;\n  color: var(--cw-panel-text);\n  color-scheme: dark;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-launcher {\n  display: none;\n}\n:host([data-theme]:not([data-theme="native"]))\n  :is(\n    .cw-panel,\n    .cw-head,\n    .cw-tabs,\n    .cw-card,\n    .cw-input,\n    .cw-select,\n    .cw-btn,\n    .cw-preset,\n    .cw-tab\n  ) {\n  background: var(--cw-panel-bg);\n  color: var(--cw-panel-text);\n  border-color: var(--cw-panel-border);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-panel {\n  border-radius: 10px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-head {\n  padding: 22px 22px 18px;\n}\n:host([data-theme]:not([data-theme="native"]))\n  :is(.cw-muted, .cw-meta, .cw-eyebrow) {\n  color: var(--cw-panel-muted);\n}\n:host([data-theme]:not([data-theme="native"])) :is(.cw-message, .cw-sender) {\n  color: var(--cw-panel-text);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-tab.active {\n  background: var(--cw-panel-hover);\n  color: var(--cw-panel-text);\n  box-shadow: inset 0 -2px #85548b;\n  border-radius: 5px 5px 0 0;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-card {\n  border-radius: 8px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-btn {\n  border-radius: 5px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-btn.primary {\n  background: #007a5a;\n  color: #fff;\n  border-color: #007a5a;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-tabs {\n  padding: 0 16px 10px;\n  gap: 2px;\n  flex-wrap: wrap;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-body {\n  padding: 18px 22px;\n}\n:host([data-theme]:not([data-theme="native"])) h1 {\n  font-size: 22px;\n  font-weight: 650;\n}\n:host([data-theme]:not([data-theme="native"])) :is(.cw-time, .cw-empty-icon) {\n  background: var(--cw-panel-hover);\n  color: var(--cw-panel-muted);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-time.overdue {\n  background: #d5a13420;\n  color: var(--cw-panel-text);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-toast {\n  background: #252329;\n  border: 1px solid #ffffff20;\n  border-radius: 7px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-shortcut {\n  color: var(--cw-panel-text);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-collection-row {\n  border-color: var(--cw-panel-border);\n}\n:host([data-theme]:not([data-theme="native"])[data-mode="light"]) {\n  --cw-panel-bg: #fff;\n  --cw-panel-text: #1d1c1d;\n  --cw-panel-muted: #616061;\n  --cw-panel-border: #ddd;\n  --cw-panel-hover: #f6f6f7;\n  color-scheme: light;\n}\n:host([data-theme]:not([data-theme="native"])[data-mode="dark"]) {\n  --cw-panel-bg: #1a1d21;\n  --cw-panel-text: #e1e2e3;\n  --cw-panel-muted: #b2b5ba;\n  --cw-panel-border: #383a3e;\n  --cw-panel-hover: #26292e;\n  color-scheme: dark;\n}\n';
 
   // src/content.ts
   if (window.top === window && location.pathname !== "/drivesharing/driveshare")
@@ -997,7 +1106,7 @@ View thread: ${url}`;
       }
       if (view === "settings") {
         body.append(
-          button("\u{1F3A8} Appearance & productivity", extras.settings),
+          button("Glack appearance & productivity", extras.settings),
           button("\u2318 K \xB7 Jump to conversation", extras.switcher)
         );
         const importer = el("input", "cw-input");
@@ -1413,7 +1522,7 @@ View thread: ${url}`;
         nav.prepend(icon("later"));
         shortcut.parentElement.append(nav);
         const prefs = button(
-          "Appearance",
+          "Glack themes",
           extras.settings,
           "cw-nav cw-appearance"
         );

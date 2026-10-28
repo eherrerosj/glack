@@ -23,3 +23,14 @@ test("radar treats punctuation literally and matches case-insensitively", () => 
     "down",
   ]);
 });
+test("mode migration preserves old dark choices and validates all new palettes", async () => {
+  const { resolvedMode, palettes } = await import("../src/preferences.ts");
+  assert.equal(preferences({ theme: "dark" }).mode, "dark");
+  assert.equal(preferences({ theme: "dark", mode: "light" }).mode, "light");
+  for (const theme of Object.keys(palettes))
+    assert.equal(preferences({ theme }).theme, theme);
+  assert.equal(resolvedMode("system", true), "dark");
+  assert.equal(resolvedMode("system", false), "light");
+  assert.equal(resolvedMode("light", true), "light");
+  assert.equal(resolvedMode("dark", false), "dark");
+});

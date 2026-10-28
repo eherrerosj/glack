@@ -2,6 +2,8 @@ import { parseBroadcast } from "./core";
 import { icon } from "./icons";
 import {
   preferences,
+  palettes,
+  resolvedMode,
   fuzzyScore,
   keywordMatches,
   type Preferences,
@@ -112,6 +114,10 @@ export function experience(
       toast(e instanceof Error ? e.message : "Could not save preferences");
     }
   }
+  const systemMode = window.matchMedia?.("(prefers-color-scheme: dark)");
+  systemMode?.addEventListener("change", () => {
+    if (p.mode === "system") apply();
+  });
   function apply() {
     const root = document.documentElement;
     if (root.dataset.cwTheme !== p.theme) root.dataset.cwTheme = p.theme;
@@ -119,9 +125,45 @@ export function experience(
     root.classList.toggle("cw-compact", p.compact);
     root.classList.toggle("cw-hide-media", p.collapseMedia);
     root.classList.toggle("cw-code-enabled", p.code);
+    const mode = resolvedMode(p.mode, systemMode?.matches ?? false);
+    if (root.dataset.cwMode !== mode) root.dataset.cwMode = mode;
+    const palette = palettes[p.theme];
+    const colors: Record<string, string> = palette
+      ? {
+          rail: palette[0],
+          side: palette[1],
+          "side-text": p.theme === "light" ? "#352636" : "#f7f4fa",
+          bg: mode === "dark" ? "#1a1d21" : "#ffffff",
+          text: mode === "dark" ? "#e1e2e3" : "#1d1c1d",
+          muted: mode === "dark" ? "#b2b5ba" : "#616061",
+          border: mode === "dark" ? "#383a3e" : "#dddddd",
+          hover: mode === "dark" ? "#26292e" : "#f6f6f7",
+          selected: palette[2],
+          link: mode === "dark" ? "#9ecbff" : "#1264a3",
+        }
+      : {};
+    for (const key of [
+      "rail",
+      "side",
+      "side-text",
+      "bg",
+      "text",
+      "muted",
+      "border",
+      "hover",
+      "selected",
+      "link",
+    ]) {
+      if (colors[key]) root.style.setProperty(`--cw-${key}`, colors[key]);
+      else root.style.removeProperty(`--cw-${key}`);
+    }
     host.dataset.theme = p.theme;
+    host.dataset.mode = mode;
     const workbench = document.getElementById("cw-host");
-    if (workbench) workbench.dataset.theme = p.theme;
+    if (workbench) {
+      workbench.dataset.theme = p.theme;
+      workbench.dataset.mode = mode;
+    }
   }
   // Chat can replace the root class attribute while its app shell hydrates.
   // Restore only Glack's owned attributes, retaining Google's other classes.
@@ -132,11 +174,11 @@ export function experience(
     attributeFilter: ["class", "data-cw-theme"],
   });
   function settings() {
-    const box = dialog("Make Chat yours");
+    const box = dialog("Glack appearance");
     box.append(
       node(
         "p",
-        "Slack-inspired appearance, with your Google Chat conversations.",
+        "Glack controls the colors and layout here. The Google Chat gear controls native settings such as notifications.",
         "muted",
       ),
     );
@@ -146,6 +188,10 @@ export function experience(
       ["light", "Paper"],
       ["dark", "Midnight"],
       ["ocean", "Ocean"],
+      ["forest", "Forest"],
+      ["rose", "Rose"],
+      ["lavender", "Lavender"],
+      ["sunset", "Sunset"],
       ["native", "Google original"],
     ]) {
       const b = button(label, () => {
@@ -155,7 +201,29 @@ export function experience(
       b.setAttribute("aria-pressed", String(p.theme === value));
       themes.append(b);
     }
-    box.append(themes);
+    box.append(node("h3", "Color theme"), themes);
+    const modes = node("div", "", "modes");
+    modes.setAttribute("aria-label", "Appearance mode");
+    for (const mode of ["light", "dark", "system"] as const) {
+      const b = button(
+        mode[0].toUpperCase() + mode.slice(1),
+        () => void change({ mode }, true),
+      );
+      b.setAttribute("aria-pressed", String(p.mode === mode));
+      b.disabled = p.theme === "native";
+      modes.append(b);
+    }
+    box.append(
+      node("h3", "Mode"),
+      modes,
+      node(
+        "p",
+        p.theme === "native"
+          ? "Google original uses Google Chat’s own appearance settings."
+          : "System follows your device automatically. Color and mode changes save, then refresh Chat.",
+        "muted",
+      ),
+    );
     const toggle = (
       label: string,
       key: "compact" | "collapseMedia" | "code" | "alerts",
@@ -251,6 +319,30 @@ export function experience(
           visited = "";
         });
       }
+    }
+  }
+  function clarifySettings() {
+    const gear = document.querySelector('.cw-topbar [aria-label="Settings"]');
+    if (gear) {
+      gear.setAttribute("aria-label", "Google Chat settings");
+      gear.setAttribute(
+        "title",
+        "Google Chat settings · notifications and account options. Use Glack appearance for themes.",
+      );
+    }
+    const nativeSettings = document.querySelector(
+      '[aria-label="Chat settings"]',
+    );
+    if (nativeSettings && !nativeSettings.querySelector(".cw-settings-help")) {
+      const help = node("div", "", "cw-settings-help");
+      help.append(
+        node(
+          "span",
+          "Using Glack? Change your colors and light/dark mode in Glack appearance.",
+        ),
+        button("Open Glack appearance", settings),
+      );
+      nativeSettings.prepend(help);
     }
   }
   function switcher() {
@@ -428,6 +520,7 @@ export function experience(
         button.classList.add("cw-new-chat");
     }
     document.querySelector('[role="banner"]')?.classList.add("cw-topbar");
+    clarifySettings();
     for (const logo of document.querySelectorAll('[aria-label="Chat logo"]')) {
       if (logo.querySelector(".cw-brand")) continue;
       const brand = node("span", "", "cw-brand");

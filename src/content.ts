@@ -243,7 +243,7 @@ function start() {
     }
     if (view === "settings") {
       body.append(
-        button("🎨 Appearance & productivity", extras.settings),
+        button("Glack appearance & productivity", extras.settings),
         button("⌘ K · Jump to conversation", extras.switcher),
       );
       const importer = el("input", "cw-input");
@@ -708,7 +708,7 @@ function start() {
       nav.prepend(icon("later"));
       shortcut.parentElement.append(nav);
       const prefs = button(
-        "Appearance",
+        "Glack themes",
         extras.settings,
         "cw-nav cw-appearance",
       );

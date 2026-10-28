@@ -474,3 +474,19 @@ p {
 :host([data-theme]:not([data-theme="native"])) .cw-collection-row {
   border-color: var(--cw-panel-border);
 }
+:host([data-theme]:not([data-theme="native"])[data-mode="light"]) {
+  --cw-panel-bg: #fff;
+  --cw-panel-text: #1d1c1d;
+  --cw-panel-muted: #616061;
+  --cw-panel-border: #ddd;
+  --cw-panel-hover: #f6f6f7;
+  color-scheme: light;
+}
+:host([data-theme]:not([data-theme="native"])[data-mode="dark"]) {
+  --cw-panel-bg: #1a1d21;
+  --cw-panel-text: #e1e2e3;
+  --cw-panel-muted: #b2b5ba;
+  --cw-panel-border: #383a3e;
+  --cw-panel-hover: #26292e;
+  color-scheme: dark;
+}

@@ -831,3 +831,28 @@ html.cw-styled .cw-topbar [aria-label="Chat logo"] .cw-brand {
   position: static !important;
   overflow: visible !important;
 }
+html.cw-styled[data-cw-mode="light"] {
+  color-scheme: light;
+}
+html.cw-styled[data-cw-mode="dark"] {
+  color-scheme: dark;
+}
+.cw-settings-help {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: var(--cw-hover, #f6f6f7);
+  color: var(--cw-text, #1d1c1d);
+  font: 14px/1.5 system-ui;
+  border-bottom: 1px solid var(--cw-border, #ddd);
+}
+.cw-settings-help button {
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
