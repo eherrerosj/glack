@@ -382,7 +382,7 @@ export function experience(
   const rail = node("nav", "", "cw-workspace-rail");
   rail.setAttribute("aria-label", "Glack workspace navigation");
   for (const [glyph, label, fn] of [
-    ["grid", "Glack appearance", settings],
+    ["glack", "Glack appearance", settings],
     ["search", "Jump to conversation", switcher],
     ["later", "Open Later", () => document.getElementById("cw-nav")?.click()],
     [
@@ -413,6 +413,14 @@ export function experience(
         button.classList.add("cw-new-chat");
     }
     document.querySelector('[role="banner"]')?.classList.add("cw-topbar");
+    for (const logo of document.querySelectorAll('[aria-label="Chat logo"]')) {
+      if (logo.querySelector(".cw-brand")) continue;
+      const brand = node("span", "", "cw-brand");
+      brand.append(icon("glack"), document.createTextNode("Glack"));
+      brand.setAttribute("aria-hidden", "true");
+      logo.append(brand);
+    }
+
     for (const root of document.querySelectorAll<HTMLElement>(
       "c-wiz[data-group-id]",
     )) {

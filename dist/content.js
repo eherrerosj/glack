@@ -2,6 +2,7 @@
 (() => {
   // src/icons.ts
   var paths = {
+    glack: "M17 6a7 7 0 1 0 0 12v-5h-5 M6 18v4l4-3",
     search: "M21 21l-5-5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
     later: "M12 8v5l3 2 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0",
     media: "M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1 M3 17l6-6 4 4 3-3 5 5 M16 7h.01",
@@ -532,7 +533,7 @@ View thread: ${url}`;
     const rail = node("nav", "", "cw-workspace-rail");
     rail.setAttribute("aria-label", "Glack workspace navigation");
     for (const [glyph, label, fn] of [
-      ["grid", "Glack appearance", settings],
+      ["glack", "Glack appearance", settings],
       ["search", "Jump to conversation", switcher],
       ["later", "Open Later", () => document.getElementById("cw-nav")?.click()],
       [
@@ -563,6 +564,13 @@ View thread: ${url}`;
           button2.classList.add("cw-new-chat");
       }
       document.querySelector('[role="banner"]')?.classList.add("cw-topbar");
+      for (const logo of document.querySelectorAll('[aria-label="Chat logo"]')) {
+        if (logo.querySelector(".cw-brand")) continue;
+        const brand = node("span", "", "cw-brand");
+        brand.append(icon("glack"), document.createTextNode("Glack"));
+        brand.setAttribute("aria-hidden", "true");
+        logo.append(brand);
+      }
       for (const root of document.querySelectorAll(
         "c-wiz[data-group-id]"
       )) {
