@@ -875,15 +875,23 @@ html.cw-styled .cw-sidebar .qydpp.pGYfl {
 html.cw-styled .cw-sidebar .qydpp.pGYfl :is(span, svg) {
   color: #fff !important;
 }
-html.cw-styled[data-cw-mode="dark"] .cw-message-row :is(button, [role="button"]) {
+html.cw-styled[data-cw-mode="dark"]
+  .cw-message-row
+  :is(button, [role="button"]) {
   background-color: var(--cw-hover) !important;
   color: var(--cw-text) !important;
   border-color: var(--cw-border) !important;
 }
 /* Remove cumulative native padding inside the single Glack composer border. */
-html.cw-styled .cw-composer { padding: 6px !important; }
-html.cw-styled .cw-composer .dJ9vNe { padding: 0 !important; }
-html.cw-styled .cw-composer .tAVIoc { padding: 0 4px !important; }
+html.cw-styled .cw-composer {
+  padding: 6px !important;
+}
+html.cw-styled .cw-composer .dJ9vNe {
+  padding: 0 !important;
+}
+html.cw-styled .cw-composer .tAVIoc {
+  padding: 0 4px !important;
+}
 html.cw-styled .cw-composer :is(.I0LFzc, .dJ9vNe, .BScnzc) {
   min-height: 38px !important;
   align-items: center !important;
@@ -894,4 +902,49 @@ html.cw-styled .cw-composer [contenteditable="true"][role="textbox"] {
   padding: 8px 4px !important;
   margin: 0 !important;
   line-height: 22px !important;
+}
+/* Popup/Gemini composers use a column wrapper, unlike full-page composers. */
+html.cw-styled .cw-composer .I0LFzc.N61DXb {
+  align-items: stretch !important;
+}
+html.cw-styled .cw-composer .N61DXb .WN9mTb {
+  width: 100% !important;
+  min-width: 0 !important;
+  align-items: flex-end !important;
+  flex-wrap: nowrap !important;
+}
+html.cw-styled .cw-composer .N61DXb .dJ9vNe {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  flex-wrap: nowrap !important;
+}
+html.cw-styled .cw-composer .N61DXb .YSTI0c {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+html.cw-styled
+  .cw-composer
+  .N61DXb
+  :is(.YSTI0c, .BScnzc, .AYGmkd, .KCm9Q, .tAVIoc) {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  flex-grow: 1 !important;
+}
+html.cw-styled .cw-composer .N61DXb [contenteditable="true"] {
+  width: 100% !important;
+  max-width: none !important;
+  text-align: left !important;
+}
+html.cw-styled .cw-composer .N61DXb .dJ9vNe {
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+html.cw-styled .cw-composer .N61DXb .WN9mTb {
+  align-items: center !important;
+}
+html.cw-styled .cw-composer .N61DXb .EFNTcf {
+  min-height: 0 !important;
+  height: auto !important;
 }
