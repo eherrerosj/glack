@@ -1,3 +1,4 @@
+import { icon } from "./icons";
 import {
   preferences,
   fuzzyScore,
@@ -39,6 +40,7 @@ export function experience(
   const button = (text: string, fn: () => void) => {
     const b = node("button", text) as HTMLButtonElement;
     b.type = "button";
+    if (text === "×") b.setAttribute("aria-label", "Close dialog");
     b.onclick = fn;
     return b;
   };
@@ -103,6 +105,7 @@ export function experience(
   function apply() {
     const root = document.documentElement;
     root.dataset.cwTheme = p.theme;
+    root.classList.toggle("cw-styled", p.theme !== "native");
     root.classList.toggle("cw-compact", p.compact);
     root.classList.toggle("cw-hide-media", p.collapseMedia);
     root.classList.toggle("cw-code-enabled", p.code);
@@ -378,18 +381,19 @@ export function experience(
   }
   const rail = node("nav", "", "cw-workspace-rail");
   rail.setAttribute("aria-label", "Workbench workspace navigation");
-  for (const [icon, label, fn] of [
-    ["W", "Chat Workbench appearance", settings],
-    ["⌕", "Jump to conversation", switcher],
-    ["◷", "Open Later", () => document.getElementById("cw-nav")?.click()],
+  for (const [glyph, label, fn] of [
+    ["grid", "Chat Workbench appearance", settings],
+    ["search", "Jump to conversation", switcher],
+    ["later", "Open Later", () => document.getElementById("cw-nav")?.click()],
     [
-      "▧",
+      "media",
       "Toggle media",
       () => void change({ collapseMedia: !p.collapseMedia }),
     ],
-    ["⚙", "Appearance and keyword radar", settings],
+    ["theme", "Appearance and keyword radar", settings],
   ] as const) {
-    const b = button(icon, fn);
+    const b = button("", fn);
+    b.append(icon(glyph));
     b.title = label;
     b.setAttribute("aria-label", label);
     rail.append(b);
@@ -412,8 +416,18 @@ export function experience(
     for (const root of document.querySelectorAll<HTMLElement>(
       "c-wiz[data-group-id]",
     )) {
-      if (root.querySelector("[contenteditable]"))
-        root.classList.add("cw-chat-surface");
+      const editor = root.querySelector<HTMLElement>(
+        '[contenteditable="true"][role="textbox"]',
+      );
+      if (editor && editor.closest("c-wiz[data-group-id]") === root) {
+        root.classList.add("cw-chat-surface", "cw-composer");
+        for (
+          let layer = editor.parentElement;
+          layer && layer !== root;
+          layer = layer.parentElement
+        )
+          layer.classList.add("cw-editor-layer");
+      }
     }
     for (const list of document.querySelectorAll<HTMLElement>(
       '[role="list"][aria-label="List of spaces."],[role="list"][aria-label="List of direct messages"]',
@@ -432,6 +446,42 @@ export function experience(
       if (!body) continue;
       const item = message(row);
       if (!item) continue;
+      let authorLine = row.querySelector<HTMLElement>(
+        ":scope > .cw-author-line",
+      );
+      if (!authorLine) {
+        authorLine = node("div", "", "cw-author-line");
+        authorLine.setAttribute("aria-hidden", "true");
+        authorLine.append(
+          node("span", "", "cw-author-avatar"),
+          node("strong"),
+          node("time"),
+        );
+        row.prepend(authorLine);
+      }
+      const setText = (e: Element | null, value: string) => {
+        if (e && e.textContent !== value) e.textContent = value;
+      };
+      const name = item.sender?.trim() || "Message";
+      setText(authorLine.querySelector("strong"), name);
+      setText(
+        authorLine.querySelector(".cw-author-avatar"),
+        name
+          .split(/\s+/)
+          .slice(0, 2)
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase(),
+      );
+      setText(
+        authorLine.querySelector("time"),
+        row.querySelector('[jsname="E53oB"]')?.textContent?.trim() ?? "",
+      );
+      row.classList.add("cw-has-author");
+      for (const author of row.querySelectorAll<HTMLElement>(
+        '[data-is-message="true"][data-member-id],h3,[role="heading"][aria-level="3"]',
+      ))
+        author.classList.add("cw-native-author");
       const matches = keywordMatches(item.text, p.keywords);
       row.classList.toggle("cw-radar-match", matches.length > 0);
       row.dataset.cwKeywords = matches.join(", ");
@@ -466,7 +516,7 @@ export function experience(
       )
         sources.push(body);
       if (sources.length && !row.querySelector(".cw-code-button")) {
-        const b = button("⌘ Code / logs", () => {
+        const b = button("Code / logs", () => {
           const text = sources.map((e) => textOf(e)).join("\n\n");
           codeViewer(text.replace(/^```[^\n]*\n/, "").replace(/\n```$/, ""));
         });

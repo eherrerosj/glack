@@ -231,3 +231,76 @@ h3 {
 .comment {
   color: #8b949e;
 }
+/* Keep all controls reachable in short windows and avoid clipped dialog footers. */
+.veil {
+  padding: clamp(20px, 7vh, 64px) 20px;
+  align-items: center;
+}
+.dialog {
+  max-height: calc(100dvh - 40px);
+  padding: 24px;
+  scrollbar-gutter: stable;
+}
+.dialog > header {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.dialog > header button {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  line-height: 1;
+}
+.themes {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 16px 0 22px;
+}
+.themes button {
+  font-size: 12px;
+  padding: 8px 6px;
+  min-height: 76px;
+}
+.themes button:before {
+  height: 28px;
+}
+.toggle {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+.toggle input {
+  flex-shrink: 0;
+}
+.results {
+  max-height: 45vh;
+  overflow: auto;
+  margin: 0 -8px;
+}
+.results button {
+  border-radius: 5px;
+}
+footer.hint {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+select {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 6px 10px;
+}
+@media (max-width: 560px) {
+  .themes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .dialog {
+    padding: 18px;
+  }
+  .code-actions {
+    flex-wrap: wrap;
+  }
+}

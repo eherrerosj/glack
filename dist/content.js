@@ -1,5 +1,28 @@
 "use strict";
 (() => {
+  // src/icons.ts
+  var paths = {
+    search: "M21 21l-5-5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
+    later: "M12 8v5l3 2 M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0",
+    media: "M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1 M3 17l6-6 4 4 3-3 5 5 M16 7h.01",
+    theme: "M12 3a9 9 0 1 0 0 18h2a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4h3a5 5 0 0 0 0-10h-4 M7 8h.01 M6 13h.01 M11 6h.01",
+    grid: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z"
+  };
+  function icon(name) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "1.7");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.setAttribute("aria-hidden", "true");
+    const path = document.createElementNS(svg.namespaceURI, "path");
+    path.setAttribute("d", paths[name] ?? paths.grid);
+    svg.append(path);
+    return svg;
+  }
+
   // src/preferences.ts
   function preferences(raw = {}) {
     return {
@@ -55,7 +78,10 @@
     if (!group || !id || !tid) return null;
     const body = row.querySelector('[jsname="bgckF"]');
     const text = body ? textOf(body) : "";
-    const sender = row.querySelector('h3,[role="heading"][aria-level="3"]')?.textContent ?? row.querySelector("[data-name]")?.getAttribute("data-name") ?? "Message";
+    const author = row.querySelector(
+      '[jsname="oU6v8b"],h3,[role="heading"][aria-level="3"]'
+    );
+    const sender = author?.textContent?.trim() || author?.getAttribute("data-name") || row.querySelector("[data-name]")?.getAttribute("data-name") || [...row.querySelectorAll('[data-is-message="true"][data-member-id]')].map((e) => e.textContent?.trim()).find(Boolean) || "Message";
     const a = account(doc);
     return {
       id: `${group[2]}/${tid}/${id}`,
@@ -143,7 +169,7 @@
   }
 
   // src/experience.css
-  var experience_default = ':host {\n  --ink: #1d1c1d;\n  --paper: #fff;\n  --muted: #616061;\n  --border: #ddd;\n  --accent: #611f69;\n  font:\n    15px/1.45 -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    sans-serif;\n  color: var(--ink);\n}\n:host([data-theme="dark"]) {\n  --paper: #1a1d21;\n  --ink: #d1d2d3;\n  --muted: #a1a1a4;\n  --border: #414348;\n  --accent: #c69bd2;\n}\n* {\n  box-sizing: border-box;\n}\nbutton,\ninput,\nselect {\n  font: inherit;\n}\nbutton {\n  cursor: pointer;\n  background: var(--paper);\n  color: var(--ink);\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  padding: 8px 12px;\n}\nbutton:hover {\n  background: color-mix(in srgb, var(--accent) 10%, var(--paper));\n}\nbutton:focus-visible,\ninput:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #1264a3;\n  outline-offset: 2px;\n}\n.veil {\n  position: fixed;\n  inset: 0;\n  background: #0007;\n  backdrop-filter: blur(3px);\n  z-index: 2147483646;\n  display: flex;\n  justify-content: center;\n  align-items: flex-start;\n  padding: 12vh 24px 24px;\n}\n.dialog {\n  width: 600px;\n  max-height: 80vh;\n  overflow: auto;\n  background: var(--paper);\n  border-radius: 12px;\n  border: 1px solid var(--border);\n  box-shadow: 0 18px 80px #0005;\n  padding: 24px;\n}\n.wide {\n  width: min(1000px, 94vw);\n}\nheader {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 18px;\n}\nheader button {\n  border: 0;\n  font-size: 24px;\n  padding: 0 8px;\n}\nh2 {\n  font-size: 22px;\n  letter-spacing: -0.5px;\n  margin: 0;\n}\nh3 {\n  font-size: 15px;\n  margin: 24px 0 6px;\n}\n.muted,\n.hint {\n  color: var(--muted);\n  font-size: 13px;\n}\n.hint {\n  font-size: 12px;\n}\n.text-input {\n  display: block;\n  width: 100%;\n  padding: 12px;\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  background: var(--paper);\n  color: var(--ink);\n  margin: 8px 0 14px;\n}\n.themes {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 10px;\n  margin: 22px 0;\n}\n.themes button:before {\n  content: "";\n  display: block;\n  height: 35px;\n  border-radius: 4px;\n  margin-bottom: 8px;\n  background: linear-gradient(\n    90deg,\n    #350d36 22%,\n    #4a154b 22%,\n    #4a154b 55%,\n    #fff 55%\n  );\n  border: 1px solid #8885;\n}\n.themes [data-swatch="dark"]:before {\n  background: linear-gradient(\n    90deg,\n    #121016 22%,\n    #19171d 22%,\n    #19171d 55%,\n    #1a1d21 55%\n  );\n}\n.themes [data-swatch="light"]:before {\n  background: linear-gradient(\n    90deg,\n    #3f0e40 22%,\n    #f3eef4 22%,\n    #f3eef4 55%,\n    #fff 55%\n  );\n}\n.themes [data-swatch="ocean"]:before {\n  background: linear-gradient(\n    90deg,\n    #062f40 22%,\n    #114b5f 22%,\n    #114b5f 55%,\n    #fff 55%\n  );\n}\n.themes [data-swatch="native"]:before {\n  background: linear-gradient(90deg, #e8f0fe 55%, #fff 55%);\n}\n.themes [aria-pressed="true"] {\n  outline: 2px solid var(--accent);\n  font-weight: 700;\n}\n.toggle {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  margin: 14px 0;\n}\n.toggle input {\n  accent-color: var(--accent);\n  width: 17px;\n  height: 17px;\n}\n.results button {\n  display: block;\n  width: 100%;\n  border: 0;\n  text-align: left;\n  padding: 12px;\n}\n.results [aria-selected="true"] {\n  background: #1264a3;\n  color: #fff;\n}\n.code-actions {\n  display: flex;\n  gap: 8px;\n}\n.code-view {\n  overflow: auto;\n  max-height: 55vh;\n  background: #161b22;\n  color: #e6edf3;\n  padding: 16px 0;\n  border-radius: 7px;\n  font:\n    13px/1.65 ui-monospace,\n    SFMono-Regular,\n    Menlo,\n    monospace;\n}\n.code-line {\n  display: flex;\n  min-width: max-content;\n}\n.line-number {\n  color: #7d8590;\n  user-select: none;\n  min-width: 55px;\n  text-align: right;\n  padding-right: 18px;\n  flex-shrink: 0;\n}\n.code-line > span:last-child {\n  padding-right: 16px;\n}\n.wrap .code-line {\n  min-width: 0;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n}\n.keyword {\n  color: #ff7b72;\n}\n.string {\n  color: #a5d6ff;\n}\n.number {\n  color: #79c0ff;\n}\n.comment {\n  color: #8b949e;\n}\n';
+  var experience_default = ':host {\n  --ink: #1d1c1d;\n  --paper: #fff;\n  --muted: #616061;\n  --border: #ddd;\n  --accent: #611f69;\n  font:\n    15px/1.45 -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    sans-serif;\n  color: var(--ink);\n}\n:host([data-theme="dark"]) {\n  --paper: #1a1d21;\n  --ink: #d1d2d3;\n  --muted: #a1a1a4;\n  --border: #414348;\n  --accent: #c69bd2;\n}\n* {\n  box-sizing: border-box;\n}\nbutton,\ninput,\nselect {\n  font: inherit;\n}\nbutton {\n  cursor: pointer;\n  background: var(--paper);\n  color: var(--ink);\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  padding: 8px 12px;\n}\nbutton:hover {\n  background: color-mix(in srgb, var(--accent) 10%, var(--paper));\n}\nbutton:focus-visible,\ninput:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #1264a3;\n  outline-offset: 2px;\n}\n.veil {\n  position: fixed;\n  inset: 0;\n  background: #0007;\n  backdrop-filter: blur(3px);\n  z-index: 2147483646;\n  display: flex;\n  justify-content: center;\n  align-items: flex-start;\n  padding: 12vh 24px 24px;\n}\n.dialog {\n  width: 600px;\n  max-height: 80vh;\n  overflow: auto;\n  background: var(--paper);\n  border-radius: 12px;\n  border: 1px solid var(--border);\n  box-shadow: 0 18px 80px #0005;\n  padding: 24px;\n}\n.wide {\n  width: min(1000px, 94vw);\n}\nheader {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 18px;\n}\nheader button {\n  border: 0;\n  font-size: 24px;\n  padding: 0 8px;\n}\nh2 {\n  font-size: 22px;\n  letter-spacing: -0.5px;\n  margin: 0;\n}\nh3 {\n  font-size: 15px;\n  margin: 24px 0 6px;\n}\n.muted,\n.hint {\n  color: var(--muted);\n  font-size: 13px;\n}\n.hint {\n  font-size: 12px;\n}\n.text-input {\n  display: block;\n  width: 100%;\n  padding: 12px;\n  border: 1px solid var(--border);\n  border-radius: 6px;\n  background: var(--paper);\n  color: var(--ink);\n  margin: 8px 0 14px;\n}\n.themes {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 10px;\n  margin: 22px 0;\n}\n.themes button:before {\n  content: "";\n  display: block;\n  height: 35px;\n  border-radius: 4px;\n  margin-bottom: 8px;\n  background: linear-gradient(\n    90deg,\n    #350d36 22%,\n    #4a154b 22%,\n    #4a154b 55%,\n    #fff 55%\n  );\n  border: 1px solid #8885;\n}\n.themes [data-swatch="dark"]:before {\n  background: linear-gradient(\n    90deg,\n    #121016 22%,\n    #19171d 22%,\n    #19171d 55%,\n    #1a1d21 55%\n  );\n}\n.themes [data-swatch="light"]:before {\n  background: linear-gradient(\n    90deg,\n    #3f0e40 22%,\n    #f3eef4 22%,\n    #f3eef4 55%,\n    #fff 55%\n  );\n}\n.themes [data-swatch="ocean"]:before {\n  background: linear-gradient(\n    90deg,\n    #062f40 22%,\n    #114b5f 22%,\n    #114b5f 55%,\n    #fff 55%\n  );\n}\n.themes [data-swatch="native"]:before {\n  background: linear-gradient(90deg, #e8f0fe 55%, #fff 55%);\n}\n.themes [aria-pressed="true"] {\n  outline: 2px solid var(--accent);\n  font-weight: 700;\n}\n.toggle {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  margin: 14px 0;\n}\n.toggle input {\n  accent-color: var(--accent);\n  width: 17px;\n  height: 17px;\n}\n.results button {\n  display: block;\n  width: 100%;\n  border: 0;\n  text-align: left;\n  padding: 12px;\n}\n.results [aria-selected="true"] {\n  background: #1264a3;\n  color: #fff;\n}\n.code-actions {\n  display: flex;\n  gap: 8px;\n}\n.code-view {\n  overflow: auto;\n  max-height: 55vh;\n  background: #161b22;\n  color: #e6edf3;\n  padding: 16px 0;\n  border-radius: 7px;\n  font:\n    13px/1.65 ui-monospace,\n    SFMono-Regular,\n    Menlo,\n    monospace;\n}\n.code-line {\n  display: flex;\n  min-width: max-content;\n}\n.line-number {\n  color: #7d8590;\n  user-select: none;\n  min-width: 55px;\n  text-align: right;\n  padding-right: 18px;\n  flex-shrink: 0;\n}\n.code-line > span:last-child {\n  padding-right: 16px;\n}\n.wrap .code-line {\n  min-width: 0;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n}\n.keyword {\n  color: #ff7b72;\n}\n.string {\n  color: #a5d6ff;\n}\n.number {\n  color: #79c0ff;\n}\n.comment {\n  color: #8b949e;\n}\n/* Keep all controls reachable in short windows and avoid clipped dialog footers. */\n.veil {\n  padding: clamp(20px, 7vh, 64px) 20px;\n  align-items: center;\n}\n.dialog {\n  max-height: calc(100dvh - 40px);\n  padding: 24px;\n  scrollbar-gutter: stable;\n}\n.dialog > header {\n  padding-bottom: 12px;\n  border-bottom: 1px solid var(--border);\n  margin-bottom: 16px;\n}\n.dialog > header button {\n  width: 32px;\n  height: 32px;\n  border-radius: 6px;\n  line-height: 1;\n}\n.themes {\n  grid-template-columns: repeat(5, minmax(0, 1fr));\n  gap: 8px;\n  margin: 16px 0 22px;\n}\n.themes button {\n  font-size: 12px;\n  padding: 8px 6px;\n  min-height: 76px;\n}\n.themes button:before {\n  height: 28px;\n}\n.toggle {\n  font-size: 14px;\n  line-height: 1.5;\n  margin: 12px 0;\n}\n.toggle input {\n  flex-shrink: 0;\n}\n.results {\n  max-height: 45vh;\n  overflow: auto;\n  margin: 0 -8px;\n}\n.results button {\n  border-radius: 5px;\n}\nfooter.hint {\n  border-top: 1px solid var(--border);\n  padding-top: 12px;\n  margin-top: 12px;\n}\nselect {\n  background: var(--paper);\n  color: var(--ink);\n  border: 1px solid var(--border);\n  border-radius: 5px;\n  padding: 6px 10px;\n}\n@media (max-width: 560px) {\n  .themes {\n    grid-template-columns: repeat(3, minmax(0, 1fr));\n  }\n  .dialog {\n    padding: 18px;\n  }\n  .code-actions {\n    flex-wrap: wrap;\n  }\n}\n';
 
   // src/experience.ts
   function experience(identity, rpc, toast) {
@@ -166,6 +192,7 @@
     const button = (text, fn) => {
       const b = node("button", text);
       b.type = "button";
+      if (text === "\xD7") b.setAttribute("aria-label", "Close dialog");
       b.onclick = fn;
       return b;
     };
@@ -229,6 +256,7 @@
     function apply() {
       const root = document.documentElement;
       root.dataset.cwTheme = p.theme;
+      root.classList.toggle("cw-styled", p.theme !== "native");
       root.classList.toggle("cw-compact", p.compact);
       root.classList.toggle("cw-hide-media", p.collapseMedia);
       root.classList.toggle("cw-code-enabled", p.code);
@@ -458,18 +486,19 @@
     }
     const rail = node("nav", "", "cw-workspace-rail");
     rail.setAttribute("aria-label", "Workbench workspace navigation");
-    for (const [icon, label, fn] of [
-      ["W", "Chat Workbench appearance", settings],
-      ["\u2315", "Jump to conversation", switcher],
-      ["\u25F7", "Open Later", () => document.getElementById("cw-nav")?.click()],
+    for (const [glyph, label, fn] of [
+      ["grid", "Chat Workbench appearance", settings],
+      ["search", "Jump to conversation", switcher],
+      ["later", "Open Later", () => document.getElementById("cw-nav")?.click()],
       [
-        "\u25A7",
+        "media",
         "Toggle media",
         () => void change({ collapseMedia: !p.collapseMedia })
       ],
-      ["\u2699", "Appearance and keyword radar", settings]
+      ["theme", "Appearance and keyword radar", settings]
     ]) {
-      const b = button(icon, fn);
+      const b = button("", fn);
+      b.append(icon(glyph));
       b.title = label;
       b.setAttribute("aria-label", label);
       rail.append(b);
@@ -492,8 +521,14 @@
       for (const root of document.querySelectorAll(
         "c-wiz[data-group-id]"
       )) {
-        if (root.querySelector("[contenteditable]"))
-          root.classList.add("cw-chat-surface");
+        const editor = root.querySelector(
+          '[contenteditable="true"][role="textbox"]'
+        );
+        if (editor && editor.closest("c-wiz[data-group-id]") === root) {
+          root.classList.add("cw-chat-surface", "cw-composer");
+          for (let layer = editor.parentElement; layer && layer !== root; layer = layer.parentElement)
+            layer.classList.add("cw-editor-layer");
+        }
       }
       for (const list of document.querySelectorAll(
         '[role="list"][aria-label="List of spaces."],[role="list"][aria-label="List of direct messages"]'
@@ -512,6 +547,37 @@
         if (!body) continue;
         const item = message(row);
         if (!item) continue;
+        let authorLine = row.querySelector(
+          ":scope > .cw-author-line"
+        );
+        if (!authorLine) {
+          authorLine = node("div", "", "cw-author-line");
+          authorLine.setAttribute("aria-hidden", "true");
+          authorLine.append(
+            node("span", "", "cw-author-avatar"),
+            node("strong"),
+            node("time")
+          );
+          row.prepend(authorLine);
+        }
+        const setText = (e, value) => {
+          if (e && e.textContent !== value) e.textContent = value;
+        };
+        const name = item.sender?.trim() || "Message";
+        setText(authorLine.querySelector("strong"), name);
+        setText(
+          authorLine.querySelector(".cw-author-avatar"),
+          name.split(/\s+/).slice(0, 2).map((n) => n[0]).join("").toUpperCase()
+        );
+        setText(
+          authorLine.querySelector("time"),
+          row.querySelector('[jsname="E53oB"]')?.textContent?.trim() ?? ""
+        );
+        row.classList.add("cw-has-author");
+        for (const author of row.querySelectorAll(
+          '[data-is-message="true"][data-member-id],h3,[role="heading"][aria-level="3"]'
+        ))
+          author.classList.add("cw-native-author");
         const matches = keywordMatches(item.text, p.keywords);
         row.classList.toggle("cw-radar-match", matches.length > 0);
         row.dataset.cwKeywords = matches.join(", ");
@@ -539,7 +605,7 @@
         ).length >= 2))
           sources.push(body);
         if (sources.length && !row.querySelector(".cw-code-button")) {
-          const b = button("\u2318 Code / logs", () => {
+          const b = button("Code / logs", () => {
             const text = sources.map((e) => textOf(e)).join("\n\n");
             codeViewer(text.replace(/^```[^\n]*\n/, "").replace(/\n```$/, ""));
           });
@@ -645,7 +711,7 @@ View thread: ${url}`;
   }
 
   // src/style.css
-  var style_default = ':host {\n  font-family:\n    Google Sans,\n    Inter,\n    -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    sans-serif;\n  color: #20352e;\n  font-size: 14px;\n  line-height: 1.5;\n  color-scheme: light dark;\n}\n* {\n  box-sizing: border-box;\n}\nbutton,\ninput,\nselect {\n  font: inherit;\n}\nbutton,\na,\ninput,\nselect {\n  -webkit-tap-highlight-color: transparent;\n}\nbutton {\n  cursor: pointer;\n}\nbutton:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #75b6a0;\n  outline-offset: 3px;\n}\nbutton {\n  transition:\n    background 0.15s,\n    transform 0.15s;\n}\nbutton:hover {\n  filter: brightness(0.96);\n}\n.cw-launcher {\n  position: fixed;\n  bottom: 24px;\n  left: 24px;\n  z-index: 2147483000;\n  border: 1px solid #d8e4dd;\n  border-radius: 30px;\n  background: #183f33;\n  color: #fff;\n  padding: 12px 20px;\n  box-shadow: 0 4px 18px #122d2925;\n  font-weight: 600;\n}\n.cw-launcher.cw-due {\n  background: #8b4e16;\n}\n.cw-panel {\n  position: fixed;\n  top: 20px;\n  right: 22px;\n  bottom: 20px;\n  width: 440px;\n  max-width: calc(100vw - 28px);\n  z-index: 2147483001;\n  background: #f7faf7;\n  border: 1px solid #dbe5dd;\n  border-radius: 24px;\n  box-shadow: 0 16px 65px #0c241f35;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  animation: cw-in 0.18s ease-out;\n}\n.cw-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  padding: 28px 26px 20px;\n  background: linear-gradient(120deg, #e7f2eb, #f7faf7);\n}\n.cw-eyebrow {\n  font-size: 10px;\n  letter-spacing: 2px;\n  font-weight: 750;\n  color: #577365;\n  margin-bottom: 8px;\n}\nh1 {\n  font-size: 24px;\n  font-weight: 550;\n  letter-spacing: -0.7px;\n  margin: 0;\n  line-height: 1.2;\n}\nh2 {\n  font-size: 18px;\n  font-weight: 550;\n  letter-spacing: -0.3px;\n  margin: 22px 0 8px;\n}\np {\n  margin: 10px 0;\n  line-height: 1.6;\n}\n.cw-close {\n  border: 0;\n  background: transparent;\n  color: inherit;\n  font-size: 27px;\n  line-height: 24px;\n  padding: 4px 8px;\n  border-radius: 8px;\n}\n.cw-tabs {\n  display: flex;\n  gap: 4px;\n  padding: 0 20px 15px;\n  border-bottom: 1px solid #e1e8e2;\n}\n.cw-tab {\n  border: 0;\n  padding: 8px 11px;\n  background: transparent;\n  color: #66756c;\n  border-radius: 10px;\n  font-size: 12px;\n  font-weight: 600;\n}\n.cw-tab.active {\n  background: #dfebe3;\n  color: #244c3b;\n}\n.cw-body {\n  padding: 20px 24px;\n  overflow: auto;\n  flex: 1;\n  overscroll-behavior: contain;\n}\n.cw-input {\n  width: 100%;\n  border: 1px solid #d9e2db;\n  border-radius: 12px;\n  background: #fff;\n  color: inherit;\n  padding: 12px 14px;\n  margin-bottom: 12px;\n  font-size: 13px;\n}\n.cw-card {\n  border: 1px solid #e0e7e1;\n  background: #fff;\n  padding: 18px;\n  border-radius: 16px;\n  margin: 12px 0;\n  box-shadow: 0 2px 3px #183f3303;\n}\n.cw-meta {\n  display: flex;\n  justify-content: space-between;\n  gap: 12px;\n  font-size: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.7px;\n  color: #738278;\n  margin-bottom: 10px;\n}\n.cw-meta span:first-child {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.cw-sender {\n  font-size: 13px;\n  font-weight: 650;\n}\n.cw-message {\n  font-size: 13px;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  max-height: 220px;\n  overflow: auto;\n  color: #44564b;\n}\n.cw-actions {\n  display: flex;\n  gap: 6px;\n  flex-wrap: wrap;\n  margin-top: 14px;\n}\n.cw-btn {\n  border: 1px solid #e0e7e1;\n  background: #f7faf7;\n  color: #375847;\n  border-radius: 8px;\n  padding: 7px 10px;\n  font-size: 11px;\n  font-weight: 600;\n}\n.cw-btn.primary {\n  background: #245b43;\n  color: #fff;\n  padding: 11px 15px;\n  border-color: #245b43;\n}\n.cw-time {\n  font-size: 11px;\n  color: #627c6b;\n  background: #eef4ef;\n  border-radius: 6px;\n  padding: 5px 8px;\n  display: inline-block;\n}\n.cw-time.overdue {\n  background: #fff0d9;\n  color: #8a5915;\n}\n.cw-muted {\n  color: #7b887f;\n  font-size: 12px;\n}\n.cw-center {\n  text-align: center;\n}\n.cw-empty-icon {\n  width: 58px;\n  height: 58px;\n  display: grid;\n  place-items: center;\n  border-radius: 50%;\n  background: #e7f0e9;\n  color: #668675;\n  font-size: 24px;\n  margin: 54px auto 18px;\n}\n.cw-toast {\n  position: fixed;\n  z-index: 2147483646;\n  bottom: 28px;\n  left: 50%;\n  transform: translateX(-50%);\n  max-width: 560px;\n  padding: 14px 20px;\n  border-radius: 12px;\n  background: #203f32;\n  color: white;\n  box-shadow: 0 8px 30px #0003;\n  font-size: 13px;\n  animation: cw-in 0.18s ease-out;\n}\n.cw-preset {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 14px;\n  border: 1px solid #d9e2db;\n  border-radius: 12px;\n  background: #fff;\n  color: inherit;\n  margin: 10px 0;\n}\n.cw-label {\n  display: block;\n  margin-top: 20px;\n  font-size: 12px;\n  color: #748377;\n}\n.cw-label input {\n  margin-top: 8px;\n}\n.cw-collection-row {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  padding: 10px 0;\n  border-bottom: 1px solid #edf1ed;\n}\n.cw-shortcut {\n  color: #2d654b;\n  flex: 1;\n  text-decoration: none;\n  font-size: 13px;\n}\n.cw-select {\n  max-width: 90px;\n  border: 1px solid #dce4dd;\n  border-radius: 6px;\n  padding: 4px;\n  color: inherit;\n  background: transparent;\n  font-size: 11px;\n}\n@keyframes cw-in {\n  from {\n    opacity: 0;\n    translate: 0 5px;\n  }\n  to {\n    opacity: 1;\n    translate: 0 0;\n  }\n}\n@media (prefers-color-scheme: dark) {\n  :host {\n    color: #dce8df;\n  }\n  .cw-panel {\n    background: #1b2420;\n    border-color: #3c4c41;\n  }\n  .cw-head {\n    background: linear-gradient(120deg, #273a2e, #1b2420);\n  }\n  .cw-eyebrow,\n  .cw-muted {\n    color: #9ab3a2;\n  }\n  .cw-tabs {\n    border-color: #35453a;\n  }\n  .cw-tab {\n    color: #a1b7a8;\n  }\n  .cw-tab.active {\n    background: #344d3d;\n    color: #d9ecdf;\n  }\n  .cw-card,\n  .cw-input,\n  .cw-preset {\n    background: #242f28;\n    border-color: #3c4c41;\n  }\n  .cw-btn {\n    background: #2d3c32;\n    color: #d0e5d7;\n    border-color: #455b4b;\n  }\n  .cw-message {\n    color: #c0d0c4;\n  }\n  .cw-close {\n    color: inherit;\n  }\n  .cw-meta {\n    color: #9bb4a4;\n  }\n  .cw-time {\n    background: #324938;\n    color: #b7d3bf;\n  }\n  .cw-time.overdue {\n    background: #4f3e25;\n    color: #e5c08b;\n  }\n  .cw-empty-icon {\n    background: #304735;\n    color: #a8c6b0;\n  }\n  .cw-shortcut {\n    color: #b0d5bd;\n  }\n  .cw-collection-row {\n    border-color: #3a4c3e;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  * {\n    animation: none !important;\n    transition: none !important;\n  }\n}\n:host([data-theme]:not([data-theme="native"])) {\n  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\n  color: #1d1c1d;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-launcher {\n  display: none;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-panel {\n  background: #fff;\n  border-color: #ddd;\n  border-radius: 10px;\n}\n:host([data-theme]:not([data-theme="native"])) .primary {\n  background: #611f69;\n  color: #fff;\n}\n:host([data-theme="dark"][data-theme]) {\n  color: #d1d2d3;\n}\n:host([data-theme="dark"][data-theme])\n  :is(\n    .cw-panel,\n    .cw-card,\n    .cw-input,\n    .cw-select,\n    .cw-btn,\n    .cw-preset,\n    .cw-tab,\n    .cw-head,\n    .cw-tabs\n  ) {\n  background: #1a1d21;\n  color: #d1d2d3;\n  border-color: #414348;\n}\n:host([data-theme="dark"][data-theme]) :is(.cw-muted, .cw-meta, .cw-eyebrow) {\n  color: #aaa;\n}\n';
+  var style_default = ':host {\n  font-family:\n    Google Sans,\n    Inter,\n    -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    sans-serif;\n  color: #20352e;\n  font-size: 14px;\n  line-height: 1.5;\n  color-scheme: light dark;\n}\n* {\n  box-sizing: border-box;\n}\nbutton,\ninput,\nselect {\n  font: inherit;\n}\nbutton,\na,\ninput,\nselect {\n  -webkit-tap-highlight-color: transparent;\n}\nbutton {\n  cursor: pointer;\n}\nbutton:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible {\n  outline: 3px solid #75b6a0;\n  outline-offset: 3px;\n}\nbutton {\n  transition:\n    background 0.15s,\n    transform 0.15s;\n}\nbutton:hover {\n  filter: brightness(0.96);\n}\n.cw-launcher {\n  position: fixed;\n  bottom: 24px;\n  left: 24px;\n  z-index: 2147483000;\n  border: 1px solid #d8e4dd;\n  border-radius: 30px;\n  background: #183f33;\n  color: #fff;\n  padding: 12px 20px;\n  box-shadow: 0 4px 18px #122d2925;\n  font-weight: 600;\n}\n.cw-launcher.cw-due {\n  background: #8b4e16;\n}\n.cw-panel {\n  position: fixed;\n  top: 20px;\n  right: 22px;\n  bottom: 20px;\n  width: 440px;\n  max-width: calc(100vw - 28px);\n  z-index: 2147483001;\n  background: #f7faf7;\n  border: 1px solid #dbe5dd;\n  border-radius: 24px;\n  box-shadow: 0 16px 65px #0c241f35;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  animation: cw-in 0.18s ease-out;\n}\n.cw-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  padding: 28px 26px 20px;\n  background: linear-gradient(120deg, #e7f2eb, #f7faf7);\n}\n.cw-eyebrow {\n  font-size: 10px;\n  letter-spacing: 2px;\n  font-weight: 750;\n  color: #577365;\n  margin-bottom: 8px;\n}\nh1 {\n  font-size: 24px;\n  font-weight: 550;\n  letter-spacing: -0.7px;\n  margin: 0;\n  line-height: 1.2;\n}\nh2 {\n  font-size: 18px;\n  font-weight: 550;\n  letter-spacing: -0.3px;\n  margin: 22px 0 8px;\n}\np {\n  margin: 10px 0;\n  line-height: 1.6;\n}\n.cw-close {\n  border: 0;\n  background: transparent;\n  color: inherit;\n  font-size: 27px;\n  line-height: 24px;\n  padding: 4px 8px;\n  border-radius: 8px;\n}\n.cw-tabs {\n  display: flex;\n  gap: 4px;\n  padding: 0 20px 15px;\n  border-bottom: 1px solid #e1e8e2;\n}\n.cw-tab {\n  border: 0;\n  padding: 8px 11px;\n  background: transparent;\n  color: #66756c;\n  border-radius: 10px;\n  font-size: 12px;\n  font-weight: 600;\n}\n.cw-tab.active {\n  background: #dfebe3;\n  color: #244c3b;\n}\n.cw-body {\n  padding: 20px 24px;\n  overflow: auto;\n  flex: 1;\n  overscroll-behavior: contain;\n}\n.cw-input {\n  width: 100%;\n  border: 1px solid #d9e2db;\n  border-radius: 12px;\n  background: #fff;\n  color: inherit;\n  padding: 12px 14px;\n  margin-bottom: 12px;\n  font-size: 13px;\n}\n.cw-card {\n  border: 1px solid #e0e7e1;\n  background: #fff;\n  padding: 18px;\n  border-radius: 16px;\n  margin: 12px 0;\n  box-shadow: 0 2px 3px #183f3303;\n}\n.cw-meta {\n  display: flex;\n  justify-content: space-between;\n  gap: 12px;\n  font-size: 10px;\n  text-transform: uppercase;\n  letter-spacing: 0.7px;\n  color: #738278;\n  margin-bottom: 10px;\n}\n.cw-meta span:first-child {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.cw-sender {\n  font-size: 13px;\n  font-weight: 650;\n}\n.cw-message {\n  font-size: 13px;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  max-height: 220px;\n  overflow: auto;\n  color: #44564b;\n}\n.cw-actions {\n  display: flex;\n  gap: 6px;\n  flex-wrap: wrap;\n  margin-top: 14px;\n}\n.cw-btn {\n  border: 1px solid #e0e7e1;\n  background: #f7faf7;\n  color: #375847;\n  border-radius: 8px;\n  padding: 7px 10px;\n  font-size: 11px;\n  font-weight: 600;\n}\n.cw-btn.primary {\n  background: #245b43;\n  color: #fff;\n  padding: 11px 15px;\n  border-color: #245b43;\n}\n.cw-time {\n  font-size: 11px;\n  color: #627c6b;\n  background: #eef4ef;\n  border-radius: 6px;\n  padding: 5px 8px;\n  display: inline-block;\n}\n.cw-time.overdue {\n  background: #fff0d9;\n  color: #8a5915;\n}\n.cw-muted {\n  color: #7b887f;\n  font-size: 12px;\n}\n.cw-center {\n  text-align: center;\n}\n.cw-empty-icon {\n  width: 58px;\n  height: 58px;\n  display: grid;\n  place-items: center;\n  border-radius: 50%;\n  background: #e7f0e9;\n  color: #668675;\n  font-size: 24px;\n  margin: 54px auto 18px;\n}\n.cw-toast {\n  position: fixed;\n  z-index: 2147483646;\n  bottom: 28px;\n  left: 50%;\n  transform: translateX(-50%);\n  max-width: 560px;\n  padding: 14px 20px;\n  border-radius: 12px;\n  background: #203f32;\n  color: white;\n  box-shadow: 0 8px 30px #0003;\n  font-size: 13px;\n  animation: cw-in 0.18s ease-out;\n}\n.cw-preset {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 14px;\n  border: 1px solid #d9e2db;\n  border-radius: 12px;\n  background: #fff;\n  color: inherit;\n  margin: 10px 0;\n}\n.cw-label {\n  display: block;\n  margin-top: 20px;\n  font-size: 12px;\n  color: #748377;\n}\n.cw-label input {\n  margin-top: 8px;\n}\n.cw-collection-row {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  padding: 10px 0;\n  border-bottom: 1px solid #edf1ed;\n}\n.cw-shortcut {\n  color: #2d654b;\n  flex: 1;\n  text-decoration: none;\n  font-size: 13px;\n}\n.cw-select {\n  max-width: 90px;\n  border: 1px solid #dce4dd;\n  border-radius: 6px;\n  padding: 4px;\n  color: inherit;\n  background: transparent;\n  font-size: 11px;\n}\n@keyframes cw-in {\n  from {\n    opacity: 0;\n    translate: 0 5px;\n  }\n  to {\n    opacity: 1;\n    translate: 0 0;\n  }\n}\n@media (prefers-color-scheme: dark) {\n  :host {\n    color: #dce8df;\n  }\n  .cw-panel {\n    background: #1b2420;\n    border-color: #3c4c41;\n  }\n  .cw-head {\n    background: linear-gradient(120deg, #273a2e, #1b2420);\n  }\n  .cw-eyebrow,\n  .cw-muted {\n    color: #9ab3a2;\n  }\n  .cw-tabs {\n    border-color: #35453a;\n  }\n  .cw-tab {\n    color: #a1b7a8;\n  }\n  .cw-tab.active {\n    background: #344d3d;\n    color: #d9ecdf;\n  }\n  .cw-card,\n  .cw-input,\n  .cw-preset {\n    background: #242f28;\n    border-color: #3c4c41;\n  }\n  .cw-btn {\n    background: #2d3c32;\n    color: #d0e5d7;\n    border-color: #455b4b;\n  }\n  .cw-message {\n    color: #c0d0c4;\n  }\n  .cw-close {\n    color: inherit;\n  }\n  .cw-meta {\n    color: #9bb4a4;\n  }\n  .cw-time {\n    background: #324938;\n    color: #b7d3bf;\n  }\n  .cw-time.overdue {\n    background: #4f3e25;\n    color: #e5c08b;\n  }\n  .cw-empty-icon {\n    background: #304735;\n    color: #a8c6b0;\n  }\n  .cw-shortcut {\n    color: #b0d5bd;\n  }\n  .cw-collection-row {\n    border-color: #3a4c3e;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  * {\n    animation: none !important;\n    transition: none !important;\n  }\n}\n\n:host([data-theme]:not([data-theme="native"])) {\n  --cw-panel-bg: #fff;\n  --cw-panel-text: #1d1c1d;\n  --cw-panel-muted: #616061;\n  --cw-panel-border: #ddd;\n  --cw-panel-hover: #f6f6f7;\n  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\n  color: var(--cw-panel-text);\n  color-scheme: light;\n}\n:host([data-theme="dark"][data-theme]) {\n  --cw-panel-bg: #1a1d21;\n  --cw-panel-text: #e1e2e3;\n  --cw-panel-muted: #aaadb2;\n  --cw-panel-border: #383a3e;\n  --cw-panel-hover: #222529;\n  color: var(--cw-panel-text);\n  color-scheme: dark;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-launcher {\n  display: none;\n}\n:host([data-theme]:not([data-theme="native"]))\n  :is(\n    .cw-panel,\n    .cw-head,\n    .cw-tabs,\n    .cw-card,\n    .cw-input,\n    .cw-select,\n    .cw-btn,\n    .cw-preset,\n    .cw-tab\n  ) {\n  background: var(--cw-panel-bg);\n  color: var(--cw-panel-text);\n  border-color: var(--cw-panel-border);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-panel {\n  border-radius: 10px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-head {\n  padding: 22px 22px 18px;\n}\n:host([data-theme]:not([data-theme="native"]))\n  :is(.cw-muted, .cw-meta, .cw-eyebrow) {\n  color: var(--cw-panel-muted);\n}\n:host([data-theme]:not([data-theme="native"])) :is(.cw-message, .cw-sender) {\n  color: var(--cw-panel-text);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-tab.active {\n  background: var(--cw-panel-hover);\n  color: var(--cw-panel-text);\n  box-shadow: inset 0 -2px #85548b;\n  border-radius: 5px 5px 0 0;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-card {\n  border-radius: 8px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-btn {\n  border-radius: 5px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-btn.primary {\n  background: #007a5a;\n  color: #fff;\n  border-color: #007a5a;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-tabs {\n  padding: 0 16px 10px;\n  gap: 2px;\n  flex-wrap: wrap;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-body {\n  padding: 18px 22px;\n}\n:host([data-theme]:not([data-theme="native"])) h1 {\n  font-size: 22px;\n  font-weight: 650;\n}\n:host([data-theme]:not([data-theme="native"])) :is(.cw-time, .cw-empty-icon) {\n  background: var(--cw-panel-hover);\n  color: var(--cw-panel-muted);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-time.overdue {\n  background: #d5a13420;\n  color: var(--cw-panel-text);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-toast {\n  background: #252329;\n  border: 1px solid #ffffff20;\n  border-radius: 7px;\n}\n:host([data-theme]:not([data-theme="native"])) .cw-shortcut {\n  color: var(--cw-panel-text);\n}\n:host([data-theme]:not([data-theme="native"])) .cw-collection-row {\n  border-color: var(--cw-panel-border);\n}\n';
 
   // src/content.ts
   if (window.top === window && location.pathname !== "/drivesharing/driveshare")
@@ -760,7 +826,7 @@ View thread: ${url}`;
         el(
           "h1",
           "",
-          view === "remind" ? "Remind me" : view === "collections" ? "Collections" : view === "settings" ? "Your workspace" : "A little less to remember."
+          view === "remind" ? "Remind me" : view === "collections" ? "Collections" : view === "settings" ? "Preferences" : view === "reminders" ? "Reminders" : view === "done" ? "Completed" : "Later"
         )
       );
       head.append(titles, button("\xD7", close, "cw-close"));
@@ -926,7 +992,7 @@ View thread: ${url}`;
           el(
             "h2",
             "cw-center",
-            view === "done" ? "Room for progress." : "You\u2019re all caught up."
+            view === "done" ? "No completed items yet" : "You\u2019re all caught up"
           ),
           el(
             "p",
@@ -1117,14 +1183,16 @@ View thread: ${url}`;
         if (!item) continue;
         const tools = el("div", "cw-message-tools");
         tools.append(
-          button("\u2661 Save", () => act(() => save(message(row)))),
-          button("\u25F7 Remind", () => remind(message(row)))
+          button("Save", () => act(() => save(message(row)))),
+          button("Remind", () => remind(message(row)))
         );
         row.append(tools);
         row.classList.add("cw-message-row");
         if (item.text.startsWith("\u21AA Replied to thread: ")) {
           const badge = el("div", "cw-thread-badge", "\u21AA Replied to thread");
-          row.prepend(badge);
+          const author = row.querySelector(":scope > .cw-author-line");
+          if (author) author.after(badge);
+          else row.prepend(badge);
         }
       }
     }
@@ -1260,19 +1328,18 @@ View thread: ${url}`;
         '[aria-label="Starred shortcut"]'
       );
       if (shortcut?.parentElement && !document.getElementById("cw-nav")) {
-        const nav = button("\u25F7  Later", () => show(), "cw-nav");
+        const nav = button("Later", () => show(), "cw-nav");
         nav.id = "cw-nav";
+        nav.prepend(icon("later"));
         shortcut.parentElement.append(nav);
         const prefs = button(
-          "\u2726  Appearance",
+          "Appearance",
           extras.settings,
           "cw-nav cw-appearance"
         );
-        const jump2 = button(
-          "\u2315  Jump to\u2026   \u2318 K",
-          extras.switcher,
-          "cw-nav cw-jump"
-        );
+        const jump2 = button("Jump to\u2026   \u2318 K", extras.switcher, "cw-nav cw-jump");
+        prefs.prepend(icon("theme"));
+        jump2.prepend(icon("search"));
         shortcut.parentElement.append(jump2, prefs);
       }
       if (sessionStorage.getItem("cw-reply-target")) {

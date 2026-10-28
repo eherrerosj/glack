@@ -194,3 +194,19 @@ test("media toggles retain emoji and can reveal a collapsed attachment", async (
     f.dom.window.close();
   }
 });
+test("composer styling never marks an enclosing conversation as an editor", async () => {
+  const f = fixture();
+  try {
+    await settle();
+    const composer = f.editors[0].parentElement;
+    const container = f.w.document.createElement("c-wiz");
+    container.dataset.groupId = "space/test";
+    composer.before(container);
+    container.append(composer);
+    await new Promise((r) => setTimeout(r, 350));
+    assert.ok(composer.classList.contains("cw-composer"));
+    assert.ok(!container.classList.contains("cw-composer"));
+  } finally {
+    f.dom.window.close();
+  }
+});

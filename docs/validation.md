@@ -42,3 +42,17 @@ This remains DOM-level confirmation, not an official API receipt. Google UI chan
 - Screenshot review found and fixed sidebar clipping, native bubble alignment, dark-theme token specificity, hard-coded white header/composer surfaces, and DM discovery (individual DMs expose data-group-id on their list item).
 - Temporary keyword `Workbench test` and alert opt-in were removed after testing. Labelled private code sample remains available for user testing.
 - Notification dedupe, account isolation, media exclusion/reveal, and malicious code text rendering have automated fixture coverage. OS notification display and real attachment collapse were not independently visually verified in this pass.
+
+## 0.2.1 visual polish
+
+Reviewed the installed PWA at its actual window size in Aubergine, Paper, Midnight, Ocean and Google original. Reviewed both outgoing private-test messages and received messages in general, without sending messages there. Tested draft entry and cleared the labelled test draft without sending it.
+
+Fixed:
+- Reused Google layout classes were applying sidebar margins/backgrounds to the main pane, creating an extra gutter and coloured corner.
+- Section sizing overrides were expanding every sidebar section, pushing Spaces out of view; only the injected shortcuts section now expands, including in Google original mode.
+- Added consistent SVG rail/sidebar icons, visible sender headers, initials and timestamps; fixed sender lookup choosing empty incoming-avatar chips and removed the leftover avatar indent.
+- Unified normal, focused and lazy-thread composers; removed nested borders, native pill backgrounds and the phantom rounded-corner outline. Scope is restricted to the nearest composer, with a regression test preventing whole-conversation styling.
+- Fixed New chat overlap with the rail, selected-conversation contrast, search gradient, dark-mode colours, received-message text alignment and sidebar section backgrounds.
+- Resized preferences dialog so its footer remains visible, compacted theme selection, constrained switcher scrolling, and restyled Later/reminders/collections with shared theme colours and clearer titles.
+
+Validation: 32 tests, strict TypeScript, build and whitespace checks pass. Latest unpacked version is 0.2.1. Aubergine is left active. No new permissions or dependencies.

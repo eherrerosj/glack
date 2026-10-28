@@ -1,3 +1,4 @@
+import { icon } from "./icons";
 import { experience } from "./experience";
 import {
   emptyState,
@@ -151,8 +152,12 @@ function start() {
           : view === "collections"
             ? "Collections"
             : view === "settings"
-              ? "Your workspace"
-              : "A little less to remember.",
+              ? "Preferences"
+              : view === "reminders"
+                ? "Reminders"
+                : view === "done"
+                  ? "Completed"
+                  : "Later",
       ),
     );
     head.append(titles, button("×", close, "cw-close"));
@@ -328,7 +333,7 @@ function start() {
         el(
           "h2",
           "cw-center",
-          view === "done" ? "Room for progress." : "You’re all caught up.",
+          view === "done" ? "No completed items yet" : "You’re all caught up",
         ),
         el(
           "p",
@@ -517,14 +522,16 @@ function start() {
       if (!item) continue;
       const tools = el("div", "cw-message-tools");
       tools.append(
-        button("♡ Save", () => act(() => save(message(row)!))),
-        button("◷ Remind", () => remind(message(row)!)),
+        button("Save", () => act(() => save(message(row)!))),
+        button("Remind", () => remind(message(row)!)),
       );
       row.append(tools);
       row.classList.add("cw-message-row");
       if (item.text.startsWith("↪ Replied to thread: ")) {
         const badge = el("div", "cw-thread-badge", "↪ Replied to thread");
-        row.prepend(badge);
+        const author = row.querySelector(":scope > .cw-author-line");
+        if (author) author.after(badge);
+        else row.prepend(badge);
       }
     }
   }
@@ -700,19 +707,18 @@ function start() {
       '[aria-label="Starred shortcut"]',
     );
     if (shortcut?.parentElement && !document.getElementById("cw-nav")) {
-      const nav = button("◷  Later", () => show(), "cw-nav");
+      const nav = button("Later", () => show(), "cw-nav");
       nav.id = "cw-nav";
+      nav.prepend(icon("later"));
       shortcut.parentElement.append(nav);
       const prefs = button(
-        "✦  Appearance",
+        "Appearance",
         extras.settings,
         "cw-nav cw-appearance",
       );
-      const jump = button(
-        "⌕  Jump to…   ⌘ K",
-        extras.switcher,
-        "cw-nav cw-jump",
-      );
+      const jump = button("Jump to…   ⌘ K", extras.switcher, "cw-nav cw-jump");
+      prefs.prepend(icon("theme"));
+      jump.prepend(icon("search"));
       shortcut.parentElement.append(jump, prefs);
     }
     if (sessionStorage.getItem("cw-reply-target")) {

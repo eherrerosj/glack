@@ -23,9 +23,16 @@ export function message(
   if (!group || !id || !tid) return null;
   const body = row.querySelector<HTMLElement>('[jsname="bgckF"]');
   const text = body ? textOf(body) : "";
+  const author = row.querySelector(
+    '[jsname="oU6v8b"],h3,[role="heading"][aria-level="3"]',
+  );
   const sender =
-    row.querySelector('h3,[role="heading"][aria-level="3"]')?.textContent ??
-    row.querySelector("[data-name]")?.getAttribute("data-name") ??
+    author?.textContent?.trim() ||
+    author?.getAttribute("data-name") ||
+    row.querySelector("[data-name]")?.getAttribute("data-name") ||
+    [...row.querySelectorAll('[data-is-message="true"][data-member-id]')]
+      .map((e) => e.textContent?.trim())
+      .find(Boolean) ||
     "Message";
   const a = account(doc);
   return {

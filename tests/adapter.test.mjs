@@ -46,3 +46,23 @@ test("sent status does not depend on the cached topic local-only flag", async ()
   ).window;
   assert.equal(confirmed(document.querySelector("[data-id]")), true);
 });
+test("reads native author chips when Google omits a heading", () => {
+  const dom = new JSDOM(
+    `<title>Lab - Chat</title><c-wiz data-local-topic-id="p" data-p='["space/test"]'><div data-message-multiplat-item-id="m" data-id="m"><span data-is-message="true" data-member-id="user/human/1">You</span><div jsname="bgckF">Hello</div></div></c-wiz>`,
+  );
+  assert.equal(
+    message(dom.window.document.querySelector("[data-id]"), dom.window.document)
+      .sender,
+    "You",
+  );
+});
+test("prefers the sender name over an empty avatar chip", () => {
+  const dom = new JSDOM(
+    `<c-wiz data-local-topic-id="p" data-p='["space/test"]'><div data-message-multiplat-item-id="m" data-id="m"><div data-is-message="true" data-member-id="user/human/1"><img alt=""></div><span jsname="oU6v8b" role="heading" aria-level="3" data-is-message="true" data-member-id="user/human/1">Alex Example</span><div jsname="bgckF">Hello</div></div></c-wiz>`,
+  );
+  assert.equal(
+    message(dom.window.document.querySelector("[data-id]"), dom.window.document)
+      .sender,
+    "Alex Example",
+  );
+});
