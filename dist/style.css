@@ -314,6 +314,19 @@ html.cw-styled .cw-message-row [jsname="bgckF"] {
 html.cw-styled .cw-message-row a {
   color: var(--cw-link) !important;
 }
+/* Native bubble-relative receipts overlap text after Glack removes bubble padding. */
+html.cw-styled .cw-message-row .EAOoq:has(> .R7SUqc) {
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+html.cw-styled .cw-message-row .EAOoq > .R7SUqc {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  margin: 0 0 0 4px !important;
+  align-self: flex-start !important;
+  flex-shrink: 0 !important;
+}
 html.cw-styled .cw-author-line {
   display: flex;
   align-items: baseline;

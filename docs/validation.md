@@ -1,5 +1,12 @@
 # Validation — 28 October 2026
 
+## Read-receipt overlap — 29 October 2026
+
+- Reproduced the reported clipping on a short outgoing DM: Google's absolutely positioned read-receipt avatar covered the final character after Glack flattened the native bubble.
+- In themed messages, receipts now occupy their own flex row below the body. The native receipt controls remain intact; Google original mode keeps its native layout.
+- Verified the affected message visually and measured a 4px gap between its body and receipt. Reloaded Glack in Chrome and refreshed the Google Chat desktop app; the corrected layout persisted.
+- TypeScript checking, production build, all 41 tests, CSS formatting and whitespace checks pass.
+
 ## Automated
 
 21 tests pass: reminder date arithmetic, URL validation, deduplicating saves, exact reply links, missing metadata, concurrent storage writes, account isolation, alarm creation, duplicate notification suppression, completing reminders, preserving reminder schedules, invalid-time rejection, two-stage broadcast fixture, occupied-draft preservation, unconfirmed-reply suppression and backup validation. TypeScript strict checking passes.
